@@ -4,7 +4,7 @@
         color: '#c0deed',
         defaults: {
             name: { value: 'subscribe state' },
-            property: { value: '' },
+            properties: { value: [""] },
         },
         inputs: 0,
         outputs: 1,
@@ -14,23 +14,174 @@
                 return this.name;
             }
 
-            if (this.property) {
-                return `${this.property}`;
+            if (this.properties && this.properties.length > 0 && this.properties[0]) {
+                if (this.properties.length === 1) {
+                    return this.properties[0];
+                } else {
+                    return `${this.properties[0]} +${this.properties.length - 1}`;
+                }
             }
 
             return 'subscribe state';
         },
+        oneditprepare: function() {
+            var node = this;
+            
+            // Ensure properties is an array
+            if (!node.properties || !Array.isArray(node.properties)) {
+                node.properties = [""];
+            }
+            
+            // Create the name field with the same structure as property fields
+            function createNameField() {
+                var container = $('<div/>', {class: "form-row name-field-row"});
+                
+                var label = $('<label/>', {
+                    for: "node-input-name",
+                    style: "min-width: 110px; width: 110px; display: inline-block; margin-right: 10px;"
+                }).html('<i class="fa fa-tag"></i> Name');
+                
+                container.append(label);
+                
+                var input = $('<input/>', {
+                    id: "node-input-name",
+                    type: "text",
+                    style: "width: calc(100% - 180px);",
+                    placeholder: "Name",
+                    value: node.name || ""
+                });
+                
+                container.append(input);
+                return container;
+            }
+            
+            // Function to create a property row
+            function createPropertyRow(index, value) {
+                var container = $('<div/>', {class: "form-row subscribe-property-row"});
+                
+                // Label changes based on number of properties
+                var label = $('<label/>', {
+                    for: "node-input-property-" + index,
+                    style: "min-width: 110px; width: 110px; display: inline-block; margin-right: 10px;"
+                });
+                
+                if (node.properties.length > 1) {
+                    label.html('<i class="fa fa-tag"></i> Property ' + (index + 1));
+                } else {
+                    label.html('<i class="fa fa-tag"></i> Property');
+                }
+                
+                container.append(label);
+                
+                // Property input field - use the same structure as the default form rows
+                var input = $('<input/>', {
+                    id: "node-input-property-" + index,
+                    type: "text",
+                    style: "width: calc(100% - 180px);",
+                    placeholder: "property",
+                    value: value || ""
+                });
+                
+                container.append(input);
+                
+                // Add remove button for all except the first property
+                if (index > 0) {
+                    var removeButton = $('<a/>', {
+                        href: "#",
+                        class: "editor-button editor-button-small",
+                        style: "margin-left: 10px; width: 20px; min-width: 20px; text-align: center;",
+                        html: '<i class="fa fa-remove"></i>'
+                    });
+                    
+                    removeButton.click(function(e) {
+                        e.preventDefault();
+                        $(this).closest('.subscribe-property-row').remove();
+                        // Renumber the remaining rows
+                        updatePropertyLabels();
+                        return false;
+                    });
+                    
+                    container.append(removeButton);
+                }
+                
+                return container;
+            }
+            
+            // Function to update property labels when rows are added/removed
+            function updatePropertyLabels() {
+                var rows = $("#subscribe-properties-container").children(".subscribe-property-row");
+                if (rows.length === 1) {
+                    $(rows[0]).find("label").html('<i class="fa fa-tag"></i> Property');
+                } else {
+                    rows.each(function(i) {
+                        $(this).find("label").html('<i class="fa fa-tag"></i> Property ' + (i + 1));
+                    });
+                }
+            }
+            
+            // Create and add the name field with the same structure
+            $("#node-input-name-container").append(createNameField());
+            
+            // Create container for all property rows
+            var propertiesContainer = $('<div/>', {id: "subscribe-properties-container"});
+            $("#node-input-property-container").append(propertiesContainer);
+            
+            // Add existing properties
+            for (var i = 0; i < node.properties.length; i++) {
+                propertiesContainer.append(createPropertyRow(i, node.properties[i]));
+            }
+            
+            // Add button to add more properties
+            var addButton = $('<button/>', {
+                type: "button",
+                class: "red-ui-button red-ui-button-small",
+                style: "margin-top: 4px;",
+                html: '<i class="fa fa-plus"></i> Add Property'
+            });
+            
+            addButton.click(function(e) {
+                e.preventDefault();
+                var rows = $("#subscribe-properties-container").children(".subscribe-property-row");
+                var newIndex = rows.length;
+                var newRow = createPropertyRow(newIndex, "");
+                propertiesContainer.append(newRow);
+                updatePropertyLabels();
+                return false;
+            });
+            
+            $("#node-input-add-property").append(addButton);
+        },
+        oneditsave: function() {
+            var node = this;
+            var properties = [];
+            
+            // Get name value
+            node.name = $("#node-input-name").val();
+            
+            // Collect all property values
+            $(".subscribe-property-row").each(function() {
+                var propInput = $(this).find("input[type='text']");
+                var value = propInput.val().trim();
+                if (value) {
+                    properties.push(value);
+                }
+            });
+            
+            // Ensure we have at least one property (can be empty)
+            if (properties.length === 0) {
+                properties = [""];
+            }
+            
+            node.properties = properties;
+        }
     });
 </script>
 
 <script type="text/html" data-template-name="subscribe-state">
-    <div class="form-row" style="display: flex;">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row" style="display: flex;">
-        <label for="node-input-property"><i class="fa fa-tag"></i> State property</label>
-        <input type="text" id="node-input-property" placeholder="property">
+    <div id="node-input-name-container"></div>
+    <div id="node-input-property-container"></div>
+    <div class="form-row">
+        <div id="node-input-add-property" style="margin-left: 120px;"></div>
     </div>
 </script>
 
@@ -39,8 +190,11 @@
     <p>A node that subscribes to global state updates, including nested property changes.</p>
     
     <h3>Details</h3>
-    <p>This node monitors changes to a specified property in Node-RED's global context. When that property 
-    changes, the node emits a message containing the property's previous and current values.</p>
+    <p>This node monitors changes to one or more specified properties in Node-RED's global context. When any of the 
+    monitored properties change, the node emits a message containing the property's previous and current values.</p>
+    
+    <p><b>Multiple Properties:</b> The node can subscribe to multiple properties at once. When any property in the list changes,
+    a separate message is sent for each change.</p>
     
     <p><b>Deep Subscription:</b> The node also supports "deep subscription," meaning it detects and reports changes 
     to nested properties within objects. For example, if you subscribe to <code>device</code> and a nested property 
@@ -49,7 +203,7 @@
     <h3>Outputs</h3>
     <p>The output message contains the following properties:</p>
     <ul>
-        <li><code>msg.property</code> - The property being monitored</li>
+        <li><code>msg.property</code> - The property being monitored that changed</li>
         <li><code>msg.previousValue</code> - The value before the change</li>
         <li><code>msg.value</code> - The current value after the change</li>
         <li><code>msg.payload</code> - Same as <code>msg.value</code></li>

@@ -5,7 +5,12 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, config);
         const node = this;
 
-        const { property } = config;
+        // Ensure properties is an array
+        const properties = Array.isArray(config.properties) ? config.properties : (config.property ? [config.property] : []);
+        
+        // Skip empty properties
+        const validProperties = properties.filter(prop => prop && prop.trim() !== '');
+        
         const emitter = getEmitter();
         const listeners = new Map();
         
@@ -16,11 +21,28 @@ module.exports = function(RED) {
         const processChange = (changedProperty, data) => {
             const { previousValue, value, changedPath: nestedChangedPath, changedProperty: nestedChangedProperty, deepChange } = data;
             
+            // Find which of our subscribed properties matches this change
+            const matchingProperty = validProperties.find(prop => {
+                // Direct match
+                if (changedProperty === prop) {
+                    return true;
+                }
+                // Deep match (nested property)
+                if (changedProperty.startsWith(prop + '.')) {
+                    return true;
+                }
+                return false;
+            });
+            
+            if (!matchingProperty) {
+                return; // Not relevant to our subscriptions
+            }
+            
             // For direct property match, just send it
-            if (changedProperty === property) {
+            if (changedProperty === matchingProperty) {
                 // Construct the message
                 const msg = {
-                    property,
+                    property: matchingProperty,
                     previousValue,
                     value,
                     payload: value,
@@ -38,12 +60,12 @@ module.exports = function(RED) {
             }
             
             // For deep property changes, get the parent object and send additional info
-            if (changedProperty.startsWith(property + '.')) {
-                const fullObject = global.get(property);
+            if (changedProperty.startsWith(matchingProperty + '.')) {
+                const fullObject = global.get(matchingProperty);
                 node.send({
                     property: changedProperty,
-                    changedProperty: changedProperty.substring(property.length + 1),
-                    parentProperty: property,
+                    subscribedProperty: matchingProperty,
+                    changedProperty: changedProperty.substring(matchingProperty.length + 1),
                     previousValue,
                     value,
                     fullObject,
@@ -52,28 +74,39 @@ module.exports = function(RED) {
             }
         };
         
-        // Add listener for the main property
-        listeners.set(property, (data) => processChange(property, data));
-        emitter.on(property, listeners.get(property));
-
-        // Store all existing properties from global context for initial setup
-        const setupDeepListeners = () => {
-            // Get all keys from global context
-            const keys = global.keys();
-            
-            // Add listeners for relevant properties
-            keys.forEach(key => {
-                // If this is a nested property of our target property
-                if (key !== property && key.startsWith(property + '.')) {
-                    if (!listeners.has(key)) {
-                        listeners.set(key, (data) => processChange(key, data));
-                        emitter.on(key, listeners.get(key));
-                    }
+        // Setup listeners for all properties
+        const setupListeners = () => {
+            // For each valid property, set up a direct listener
+            validProperties.forEach(prop => {
+                if (!listeners.has(prop)) {
+                    listeners.set(prop, (data) => processChange(prop, data));
+                    emitter.on(prop, listeners.get(prop));
                 }
             });
         };
         
+        // Store all existing properties from global context for deep subscription
+        const setupDeepListeners = () => {
+            // Get all keys from global context
+            const keys = global.keys();
+            
+            // For each valid property, set up deep listeners
+            validProperties.forEach(prop => {
+                // Add listeners for relevant properties
+                keys.forEach(key => {
+                    // If this is a nested property of our target property
+                    if (key !== prop && key.startsWith(prop + '.')) {
+                        if (!listeners.has(key)) {
+                            listeners.set(key, (data) => processChange(key, data));
+                            emitter.on(key, listeners.get(key));
+                        }
+                    }
+                });
+            });
+        };
+        
         // Initial setup of listeners
+        setupListeners();
         setupDeepListeners();
         
         // Periodically check for new properties and add listeners

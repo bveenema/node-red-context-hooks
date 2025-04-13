@@ -1,0 +1,200 @@
+[
+    {
+        "id": "00feee258822b645",
+        "type": "group",
+        "z": "f6f2187d.f17ca8",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "61cadd8af2bdd5d2",
+            "9d1f5f5e415dbe0d",
+            "e1f4b6a8e1385a7d",
+            "6ee2391fec440ab1",
+            "8537c442013bc684",
+            "6e87649a23bd4467",
+            "9574f2ac42aeae5a",
+            "3fdc3f89e4a0f1d9",
+            "597b7f6ad7fc247d"
+        ],
+        "x": 54,
+        "y": 659,
+        "w": 432,
+        "h": 242
+    },
+    {
+        "id": "61cadd8af2bdd5d2",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "Mult-Subscribe",
+        "info": "",
+        "x": 160,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "9d1f5f5e415dbe0d",
+        "type": "subscribe-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "subscribe state",
+        "properties": [
+            "test3",
+            "test4"
+        ],
+        "x": 160,
+        "y": 860,
+        "wires": [
+            [
+                "8537c442013bc684"
+            ]
+        ]
+    },
+    {
+        "id": "e1f4b6a8e1385a7d",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "set global state",
+        "property": "test3",
+        "func": "return msg.payload;",
+        "x": 380,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "6ee2391fec440ab1",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "Set Object",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"string\":\"Hello World\",\"float\":3.14,\"bool\":false,\"int\":41}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 740,
+        "wires": [
+            [
+                "e1f4b6a8e1385a7d"
+            ]
+        ]
+    },
+    {
+        "id": "8537c442013bc684",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "6e87649a23bd4467",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "Set Object",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"string\":\"Hey uou!\",\"float\":1.234,\"bool\":true,\"int\":7}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 780,
+        "wires": [
+            [
+                "9574f2ac42aeae5a"
+            ]
+        ]
+    },
+    {
+        "id": "9574f2ac42aeae5a",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "set global state",
+        "property": "test4",
+        "func": "return msg.payload;",
+        "x": 380,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "3fdc3f89e4a0f1d9",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "Update Int",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 820,
+        "wires": [
+            [
+                "597b7f6ad7fc247d"
+            ]
+        ]
+    },
+    {
+        "id": "597b7f6ad7fc247d",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "set global state",
+        "property": "test4.int",
+        "func": "return msg.payload;",
+        "x": 380,
+        "y": 820,
+        "wires": []
+    }
+]
