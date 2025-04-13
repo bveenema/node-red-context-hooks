@@ -79,8 +79,57 @@
 </script>
 
 <script type="text/html" data-help-name="set-global-state">
-	<p>A node that assigns the message payload to the state property</p>
-	<div class="form-tips"><b>Tip:</b> The property name can be overridden by setting `msg.property` value.</div>
-	<div class="form-tips"><b>Tip:</b> Use dots to group state, i.e `kitchen.temperature`.</div>
-	<div class="form-tips"><b>Tip:</b> Returning nothing (undefined) will keep the existing value of the property.</div>
+    <h3>About</h3>
+    <p>A node that sets values in the global context and notifies subscribers of changes.</p>
+    
+    <h3>Details</h3>
+    <p>This node sets a specified property in Node-RED's global context. When the property is updated, an event is emitted 
+    that can be detected by <code>subscribe-state</code> and <code>state-hook</code> nodes.</p>
+    
+    <p><b>Deep Property Updates:</b> The node supports setting deeply nested properties using dot notation. For example, 
+    you can update <code>device.status.online</code> directly without having to modify the entire <code>device</code> object.</p>
+    
+    <p>When a nested property is updated, the node automatically triggers events for both the specific property that changed 
+    and its parent object, allowing subscribers to the parent object to detect changes to any nested properties.</p>
+    
+    <h3>Inputs</h3>
+    <ul>
+        <li><code>msg.property</code> (optional) - Overrides the configured property name</li>
+        <li><code>msg.payload</code> - Typically used as the value to set (but can be processed by the function)</li>
+    </ul>
+    
+    <h3>Configuration</h3>
+    <dl>
+        <dt>State property</dt>
+        <dd>The name of the property to set in global context. Use dot notation for nested properties (e.g., <code>user.settings.theme</code>).</dd>
+        
+        <dt>State value</dt>
+        <dd>A JavaScript function that returns the value to set. The function has access to the incoming <code>msg</code> object.</dd>
+    </dl>
+    
+    <h3>Examples</h3>
+    <p><b>Setting a simple value:</b></p>
+    <pre>// Sets the temperature property to the payload value
+return msg.payload;</pre>
+    
+    <p><b>Setting a nested property:</b></p>
+    <p>Configure the State property as <code>device.status.online</code> and use:</p>
+    <pre>// Sets device.status.online to true/false
+return msg.payload === "connected";</pre>
+    
+    <p><b>Setting an object:</b></p>
+    <p>Configure the State property as <code>user</code> and use:</p>
+    <pre>// Sets the entire user object
+return {
+  name: msg.payload.name,
+  role: msg.payload.role,
+  preferences: {
+    theme: msg.payload.theme || "default"
+  }
+};</pre>
+    
+    <h3>Notes</h3>
+    <p><b>Important:</b> To ensure proper event handling, all global context values that need to be monitored should be updated using this node. 
+    Changes made directly to global context without this node will not trigger events for subscribers.</p>
+    <p>Returning <code>undefined</code> from the function will leave the existing value unchanged.</p>
 </script>

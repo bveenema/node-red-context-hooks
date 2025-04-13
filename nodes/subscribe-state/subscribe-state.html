@@ -35,5 +35,50 @@
 </script>
 
 <script type="text/html" data-help-name="subscribe-state">
-    <p>A node that subscribes to the state updates</p>
+    <h3>About</h3>
+    <p>A node that subscribes to global state updates, including nested property changes.</p>
+    
+    <h3>Details</h3>
+    <p>This node monitors changes to a specified property in Node-RED's global context. When that property 
+    changes, the node emits a message containing the property's previous and current values.</p>
+    
+    <p><b>Deep Subscription:</b> The node also supports "deep subscription," meaning it detects and reports changes 
+    to nested properties within objects. For example, if you subscribe to <code>device</code> and a nested property 
+    like <code>device.status.online</code> changes, you'll be notified of the change.</p>
+    
+    <h3>Outputs</h3>
+    <p>The output message contains the following properties:</p>
+    <ul>
+        <li><code>msg.property</code> - The property being monitored</li>
+        <li><code>msg.previousValue</code> - The value before the change</li>
+        <li><code>msg.value</code> - The current value after the change</li>
+        <li><code>msg.payload</code> - Same as <code>msg.value</code></li>
+    </ul>
+    
+    <p><b>For nested property changes, additional fields are included:</b></p>
+    <ul>
+        <li><code>msg.deepChange</code> - Set to <code>true</code> for nested property changes</li>
+        <li><code>msg.changedPath</code> - The full path of the property that changed (e.g., <code>device.status.online</code>)</li>
+        <li><code>msg.changedProperty</code> - The path relative to the subscribed property (e.g., <code>status.online</code>)</li>
+    </ul>
+    
+    <h3>Example</h3>
+    <p>If you subscribe to <code>user</code> and monitor an object containing user information:</p>
+    <pre>{
+  name: "John",
+  preferences: {
+    theme: "dark",
+    notifications: true
+  }
+}</pre>
+    <p>When <code>user.preferences.theme</code> changes from "dark" to "light", you'll receive a message with:</p>
+    <pre>msg = {
+  property: "user",
+  previousValue: { name: "John", preferences: { theme: "dark", notifications: true } },
+  value: { name: "John", preferences: { theme: "light", notifications: true } },
+  payload: { name: "John", preferences: { theme: "light", notifications: true } },
+  deepChange: true,
+  changedPath: "user.preferences.theme",
+  changedProperty: "preferences.theme"
+}</pre>
 </script>

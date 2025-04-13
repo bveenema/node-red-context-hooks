@@ -1,9 +1,9 @@
 {
-  "name": "@siirimangus/node-red-contrib-context-hook",
+  "name": "@bveenema/node-red-context-hook",
   "version": "1.0.3",
-  "description": "Nodes for managing state in Node-RED platform",
-  "keywords": ["node-red", "node-red-contrib", "state"],
-  "homepage": "https://github.com/siirimangus/node-red-contrib-context-hook#readme",
+  "description": "Nodes for managing global context state in Node-RED platform using pub/sub",
+  "keywords": ["node-red", "node-red-contrib", "state", "publish", "subscribe"],
+  "homepage": "https://github.com/bveenema/node-red-context-hook#readme",
   "main": "state-hook.js",
   "node-red": {
     "nodes": {
@@ -15,7 +15,15 @@
   "scripts": {
     "test": "jest \".*.test.js\""
   },
-  "author": "Siiri Mangus, Mikk Mangus",
+  "author": "Ben Veenema",
+  "contributors": [
+    {
+      "name": "Siiri Mangus"
+    },
+    {
+      "name": "Mikk Mangus"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21",

@@ -1,40 +1,22 @@
-# node-red-contrib-context-hook
+# node-red-context-hook
 
-A [Node-RED](https://nodered.org/) extension for state management.
-
-## Architectural idea
-
-In order for a node to decide what will be the next output, it might need to take into account several inputs.
-The logic, how the output is calculated, might be a combination of multiple conditional statements.
-Instead of building complex flows with `switch` and other `function` nodes, the extension provides nodes
-that will centralize the decision-making logic into one node, therefore managing this will become easier and
-less error-prone.
-
-The approach is inspired by the [React `useState` hook](https://react.dev/reference/react/useState).
-Whenever there is a change in the state that is used in the function (`state-hook`), the function will run again.
-Compared to building Node-RED flows as usual, this approach allows better control over behaviours that have multiple inputs.
+A [Node-RED](https://nodered.org/) extension for global context state management. This project features publish and subscribe nodes that allow you to subscribe to global context. It uses nodejs events module to emit events when global context changes instead of building complex, tightly coupled flows with `switch` and `function` nodes. This allows for better state management in Node Red projects
+- Deep Subscribe: subscriptions to a high level object will be notified if any key within the object is updated
 
 ## Installation
 
 Either use the Manage Palette option in the Node-RED menu or run the following command in your Node-RED user directory
 
 ```
-npm i node-red-contrib-context-hook
+npm install --production --save @bveenema/node-red-context-hook
 ```
 
+Omit the `--production` flag, in order to install the development dependencies for testing and coverage. Omit `--save` if you don't want to add it to your package.json.
+
 ## Usage
+This extension is interacts with global context for state management.
 
-The extension provides three nodes under the category "state".
-
-<a href="https://drive.google.com/uc?export=view&id=1wPKEwpYvobg2yH1u9egZ-Ie3PJAUxaBY">
-    <img alt="nodes in extension" src="https://drive.google.com/uc?export=view&id=1wPKEwpYvobg2yH1u9egZ-Ie3PJAUxaBY" height="200" >
-</a>
-
-In order to use the `subscribe-state` and the `state-hook` nodes, the `set-global-state` node must be used beforehand.
-The updates to the state (Node-RED global context) are only captured if the state is set by `set-global-state` node.
-
-### 🔸 Node `set-global-state`
-
+### set-global-state
 This node is used to set values to the global context. After the value is set, an event is emitted to the system
 that the other nodes `subscribe-state` and `state-hook` can listen to.
 
@@ -42,22 +24,9 @@ As an example, there is a simple flow to set kitchen temperature. The function i
 the temperature value from the message payload and sets it to the global context with the property name `kitchen.temperature`.
 If the function returns `undefined`, the value is not updated and no event is emitted.
 
-<a href="https://drive.google.com/uc?export=view&id=1aEbxFollc9YXBJvh3e9qZAWc7kEY4Ea6">
-    <img alt="set-global-state node flow" src="https://drive.google.com/uc?export=view&id=1aEbxFollc9YXBJvh3e9qZAWc7kEY4Ea6" height="70" >
-</a>
-<br/>
-<a href="https://drive.google.com/uc?export=view&id=1VnZusn-Yfl0AyRvnTRIDgmQHWu3x8KBx">
-    <img alt="set-global-state node editing" src="https://drive.google.com/uc?export=view&id=1VnZusn-Yfl0AyRvnTRIDgmQHWu3x8KBx" height="270" >
-</a>
+**IMPORTANT!** In order for the subscribe and hook nodes to work, global context must be updated using this Node! Any context updated with this node will NOT trigger an event for the subscribe and hook nodes
 
-And then the value can be seen in the global context.
-
-<a href="https://drive.google.com/uc?export=view&id=1g0WhCTZ8Modc4J2x-n_rvPVByHCDEz0i">
-    <img alt="value in the global context" src="https://drive.google.com/uc?export=view&id=1g0WhCTZ8Modc4J2x-n_rvPVByHCDEz0i" height="90" >
-</a>
-
-### 🔸 Node `subscribe-state`
-
+### subscribe-state
 This is a node that is used for listening to changes in the global context that are saved by the `set-global-state` node.
 If there has been a change in the context value, the node will forward the information about the change in the following format:
 
@@ -74,23 +43,8 @@ As an example, let's listen to the kitchen temperature changes that were set in 
 First, add the `subscribe-state` node to the flow and configure it to listen to the property `kitchen.temperature`,
 and then debug the message that is sent after kitchen temperature change is saved to the global context.
 
-<a href="https://drive.google.com/uc?export=view&id=1LH6kQyKVEdEP2s9MncbE4r-vYSQmEduF">
-    <img alt="subscribe-state node flow" src="https://drive.google.com/uc?export=view&id=1LH6kQyKVEdEP2s9MncbE4r-vYSQmEduF" height="110" >
-</a>
-<br />
-<br />
-<a href="https://drive.google.com/uc?export=view&id=1p0rhKUiYnNKGpmPBQItFWnmK9iPVYATv">
-    <img alt="subscribe-state node editing" src="https://drive.google.com/uc?export=view&id=1p0rhKUiYnNKGpmPBQItFWnmK9iPVYATv" height="200" >
-</a>
-<br />
-<br />
-<a href="https://drive.google.com/uc?export=view&id=1tRGcw09WoRNpV5jPtDZQg834h9D4n4uV">
-    <img alt="subscribe-state node output" src="https://drive.google.com/uc?export=view&id=1tRGcw09WoRNpV5jPtDZQg834h9D4n4uV" height="170" >
-</a>
-
-### 🔸 Node `state-hook`. This is the node where the magic happens 🪄
-
-Within the function in this node a hook called `useGlobal` is available.
+### state-hook
+A function node that provides a hook called `useGlobal`.
 This hook can be utilized to watch changes in the global context that were saved via `set-global-state` node.
 The `useGlobal` function takes in two parameters: property name from the global context and the default value for it.
 The second parameter is optional and is `null` by default. For example, to watch changes in the `kitchen.temperature` value,
@@ -104,33 +58,38 @@ The `state-hook` node comes in handy when the logic for deciding the next state 
 incoming signals. Instead of connecting the signals with `switch`, `function` etc. nodes, all the logic can be handled
 within the `state-hook` node.
 
-Let's take the following scenario and break it down into implementation steps: a light should turn on
-when there is movement in the room, and it is dark in the room. In all the other cases the lamp should turn off.
+## Contribution
 
-1) Save the brightness and movement data to the global state via `set-global-state` nodes.
+To setup your local development environment first clone this repository, then use a container runtime to get your node-red environment up and running.
 
-<a href="https://drive.google.com/uc?export=view&id=1hamfk2DbD-8rY-0ZT0CabG6ws8036HUV">
-    <img alt="set-global-state nodes" src="https://drive.google.com/uc?export=view&id=1hamfk2DbD-8rY-0ZT0CabG6ws8036HUV" height="90" >
-</a>
+Using Podman:
+```bash
+podman run -p 1880:1880 -v $(pwd):/data/node_modules/@bveenema/node-red-context-hook -d --name node-red-context-hook nodered/node-red
+```
 
-2) Use the `state-hook` node to listen to changes in the global context with the `useGlobal` function and
-calculate the output for the light.
+Or using Docker:
+```bash
+# For Linux/Mac:
+docker run -p 1880:1880 -v "$(pwd)":/data/node_modules/@bveenema/node-red-context-hook -d --name node-red-context-hook nodered/node-red
 
-<a href="https://drive.google.com/uc?export=view&id=15q6QCquBEBDaiLIL_irFokGmDcne1IUh">
-    <img alt="state-hook node in the flow" src="https://drive.google.com/uc?export=view&id=15q6QCquBEBDaiLIL_irFokGmDcne1IUh" height="60" >
-</a>
-<br />
-<br />
-<a href="https://drive.google.com/uc?export=view&id=1xznB-Fc9YuIs6HUpCDCCVSEnUZwDw_Gt">
-    <img alt="state-hook node configuration" src="https://drive.google.com/uc?export=view&id=1xznB-Fc9YuIs6HUpCDCCVSEnUZwDw_Gt" height="350" >
-</a>
+# For Windows PowerShell:
+docker run -p 1880:1880 -v ${PWD}:/data/node_modules/@bveenema/node-red-context-hook -d --name node-red-context-hook nodered/node-red
+```
 
-Whenever there is a change in either `bathroom.illuminance` or `bathroom.occcupancy` value, the function for calculating
-the lamp state is run again.
+After you saved your changes to the code update the installation within the container with this command:
 
-Most probably the illuminance might be affected by the light being turned on, therefore updating the state of the illuminance
-should take that into account.
+For Podman:
+```bash
+podman exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/ && podman restart node-red-context-hook
+```
 
-<a href="https://drive.google.com/uc?export=view&id=1tfQ91UZzRwfIiGNBmCaMmScuCokp54kI">
-    <img alt="set-global-state node configuration" src="https://drive.google.com/uc?export=view&id=1tfQ91UZzRwfIiGNBmCaMmScuCokp54kI" height="350" >
-</a>
+For Docker:
+```bash
+# For Linux/Mac:
+docker exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/ && docker restart node-red-context-hook
+
+# For Windows PowerShell:
+docker exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/; docker restart node-red-context-hook 
+```
+
+*Note: On SELinux enabled machines it's necessary to allow containers access to your working directory like this: `chcon -t container_file_t $(pwd)`*

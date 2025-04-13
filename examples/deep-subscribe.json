@@ -1,0 +1,153 @@
+[
+    {
+        "id": "46a9ebb9267f8f63",
+        "type": "group",
+        "z": "f6f2187d.f17ca8",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "2d6535ba5a7f1e55",
+            "9e41a70db316fd15",
+            "94e3f3c2f59dda3e",
+            "cc2e186664fc2b18",
+            "9ebfb1bde94ec945",
+            "1e577d8c16653f82",
+            "11f9437613bdc5d2"
+        ],
+        "x": 34,
+        "y": 419,
+        "w": 432,
+        "h": 202
+    },
+    {
+        "id": "2d6535ba5a7f1e55",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "Deep Subscribe Flow",
+        "info": "",
+        "x": 160,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "9e41a70db316fd15",
+        "type": "subscribe-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "subscribe state",
+        "property": "test2",
+        "x": 140,
+        "y": 580,
+        "wires": [
+            [
+                "9ebfb1bde94ec945"
+            ]
+        ]
+    },
+    {
+        "id": "94e3f3c2f59dda3e",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "set global state",
+        "property": "test2",
+        "func": "return msg.payload;",
+        "x": 360,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "cc2e186664fc2b18",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "Set Object",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"string\":\"Hello World\",\"float\":3.14,\"bool\":false,\"int\":41}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 500,
+        "wires": [
+            [
+                "94e3f3c2f59dda3e"
+            ]
+        ]
+    },
+    {
+        "id": "9ebfb1bde94ec945",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "1e577d8c16653f82",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "Update Int",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 540,
+        "wires": [
+            [
+                "11f9437613bdc5d2"
+            ]
+        ]
+    },
+    {
+        "id": "11f9437613bdc5d2",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "set global state",
+        "property": "test2.int",
+        "func": "return msg.payload;",
+        "x": 360,
+        "y": 540,
+        "wires": []
+    }
+]
