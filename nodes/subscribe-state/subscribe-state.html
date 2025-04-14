@@ -32,29 +32,6 @@
                 node.properties = [""];
             }
             
-            // Create the name field with the same structure as property fields
-            function createNameField() {
-                var container = $('<div/>', {class: "form-row name-field-row"});
-                
-                var label = $('<label/>', {
-                    for: "node-input-name",
-                    style: "min-width: 110px; width: 110px; display: inline-block; margin-right: 10px;"
-                }).html('<i class="fa fa-tag"></i> Name');
-                
-                container.append(label);
-                
-                var input = $('<input/>', {
-                    id: "node-input-name",
-                    type: "text",
-                    style: "width: calc(100% - 180px);",
-                    placeholder: "Name",
-                    value: node.name || ""
-                });
-                
-                container.append(input);
-                return container;
-            }
-            
             // Function to create a property row
             function createPropertyRow(index, value) {
                 var container = $('<div/>', {class: "form-row subscribe-property-row"});
@@ -119,9 +96,6 @@
                 }
             }
             
-            // Create and add the name field with the same structure
-            $("#node-input-name-container").append(createNameField());
-            
             // Create container for all property rows
             var propertiesContainer = $('<div/>', {id: "subscribe-properties-container"});
             $("#node-input-property-container").append(propertiesContainer);
@@ -178,7 +152,10 @@
 </script>
 
 <script type="text/html" data-template-name="subscribe-state">
-    <div id="node-input-name-container"></div>
+    <div class="form-row">
+        <label for="node-input-name" style="min-width: 110px; width: 110px; display: inline-block; margin-right: 10px;"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" style="width: calc(100% - 180px);" placeholder="Name">
+    </div>
     <div id="node-input-property-container"></div>
     <div class="form-row">
         <div id="node-input-add-property" style="margin-left: 120px;"></div>
