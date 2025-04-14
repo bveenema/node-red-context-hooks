@@ -3,6 +3,7 @@
 A [Node-RED](https://nodered.org/) extension for global context state management. This project features publish and subscribe nodes that allow you to subscribe to global context. It uses nodejs events module to emit events when global context changes instead of building complex, tightly coupled flows with `switch` and `function` nodes. This allows for better state management in Node Red projects
 - Deep Subscribe: subscriptions to a high level object will be notified if any key within the object is updated
 - Multi-Subscribe: subscribe nodes can specify more than 1 state and will recieve a notification when any of them change.
+- Append Publish: choose between appending to the current state or overriding it.
 
 ## Installation
 

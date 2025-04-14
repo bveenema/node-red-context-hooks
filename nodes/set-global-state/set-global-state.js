@@ -1,4 +1,4 @@
-const { isEqual, cloneDeep } = require('lodash');
+const { isEqual, cloneDeep, merge } = require('lodash');
 const { getEmitter } = require('../../events/emitter');
 
 module.exports = function(RED) {
@@ -59,6 +59,9 @@ module.exports = function(RED) {
             if (msg.property) {
                 property = msg.property;
             }
+            
+            // Get action from config or msg
+            const action = msg.action || config.action || 'replace';
 
             try {
                 const previousValue = global.get(property);
@@ -72,17 +75,78 @@ module.exports = function(RED) {
                     return;
                 }
 
-                if (isEqual(previousValue, value)) {
+                let finalValue = value;
+                
+                // Handle append action if needed
+                if (action === 'append' && previousValue !== undefined) {
+                    // Apply different append behaviors based on data type
+                    if (Array.isArray(previousValue)) {
+                        // For arrays, add items to the end
+                        if (Array.isArray(value)) {
+                            finalValue = [...previousValue, ...value];
+                        } else {
+                            // Add single item to array
+                            finalValue = [...previousValue, value];
+                        }
+                    } else if (Buffer.isBuffer(previousValue)) {
+                        // For buffers, concatenate them
+                        if (Buffer.isBuffer(value)) {
+                            finalValue = Buffer.concat([previousValue, value]);
+                        } else if (typeof value === 'string') {
+                            // If value is a string, convert to buffer and concatenate
+                            finalValue = Buffer.concat([previousValue, Buffer.from(value)]);
+                        } else {
+                            node.error(`Cannot append ${typeof value} to Buffer`, msg);
+                            node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
+                            if (done) done();
+                            return;
+                        }
+                    } else if (typeof previousValue === 'object' && previousValue !== null && typeof value === 'object' && value !== null) {
+                        // For objects, merge properties
+                        finalValue = merge({}, previousValue, value);
+                    } else if (typeof previousValue === 'string') {
+                        // For strings, concatenate
+                        if (typeof value === 'string') {
+                            finalValue = previousValue + value;
+                        } else if (Buffer.isBuffer(value)) {
+                            // If value is a buffer, convert to string and concatenate
+                            finalValue = previousValue + value.toString();
+                        } else {
+                            node.error(`Cannot append ${typeof value} to string`, msg);
+                            node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
+                            if (done) done();
+                            return;
+                        }
+                    } else if (typeof previousValue === 'number') {
+                        // For numbers, add
+                        if (typeof value === 'number') {
+                            finalValue = previousValue + value;
+                        } else {
+                            node.error(`Cannot append ${typeof value} to number`, msg);
+                            node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
+                            if (done) done();
+                            return;
+                        }
+                    } else {
+                        // Types don't match and can't be appended
+                        node.error(`Cannot append to ${typeof previousValue}`, msg);
+                        node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
+                        if (done) done();
+                        return;
+                    }
+                }
+
+                if (isEqual(previousValue, finalValue)) {
                     return;
                 }
 
                 // For leaf properties, simply set the value
                 if (!property.includes('.')) {
-                    global.set(property, value);
+                    global.set(property, finalValue);
                 }
 
                 // Emit events for this property and any parent paths
-                emitPropertyAndParents(property, previousValue, value);
+                emitPropertyAndParents(property, previousValue, finalValue);
 
                 // This call is wrapped in a check that 'done' exists
                 // so the node will work in earlier versions of Node-RED (<1.0)

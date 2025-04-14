@@ -1,0 +1,290 @@
+[
+    {
+        "id": "1ca17a844f5dc7a3",
+        "type": "group",
+        "z": "f6f2187d.f17ca8",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "df707db2e488b2bf",
+            "bd7e624c1effa435",
+            "e6486a94f211ad9f",
+            "47ed28a6b55784b4",
+            "f20820307821e482",
+            "90b633177ca41c33",
+            "9187ea7a6703aa33",
+            "3e2bee7b69fe9f61",
+            "9d6aeea4c36caa4c",
+            "9413f52193f9be10",
+            "c7ec046b3fad5790",
+            "9130e926c08863a6",
+            "191dad0439b05f70"
+        ],
+        "x": 754,
+        "y": 179,
+        "w": 432,
+        "h": 322
+    },
+    {
+        "id": "df707db2e488b2bf",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "Append or Replace Publish FLow",
+        "info": "",
+        "x": 910,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "bd7e624c1effa435",
+        "type": "subscribe-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "subscribe state",
+        "properties": [
+            "test5",
+            "test6",
+            "test7",
+            "test8",
+            "test9"
+        ],
+        "x": 860,
+        "y": 460,
+        "wires": [
+            [
+                "f20820307821e482"
+            ]
+        ]
+    },
+    {
+        "id": "e6486a94f211ad9f",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "set global state",
+        "property": "test5",
+        "action": "append",
+        "func": "let object = {}\nobject[msg.timestamp] = msg.payload\n\nreturn object;",
+        "x": 1080,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "47ed28a6b55784b4",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "Set Object",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "timestamp",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"string\":\"Hello World\",\"float\":3.14,\"bool\":false,\"int\":41}",
+        "payloadType": "json",
+        "x": 880,
+        "y": 260,
+        "wires": [
+            [
+                "e6486a94f211ad9f"
+            ]
+        ]
+    },
+    {
+        "id": "f20820307821e482",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "90b633177ca41c33",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "Set Array",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "isArray",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[1]",
+        "payloadType": "json",
+        "x": 880,
+        "y": 300,
+        "wires": [
+            [
+                "9187ea7a6703aa33"
+            ]
+        ]
+    },
+    {
+        "id": "9187ea7a6703aa33",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "set global state",
+        "property": "test6",
+        "action": "append",
+        "func": "return msg.payload;",
+        "x": 1080,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3e2bee7b69fe9f61",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "Set String",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Hello!",
+        "payloadType": "str",
+        "x": 880,
+        "y": 340,
+        "wires": [
+            [
+                "9d6aeea4c36caa4c"
+            ]
+        ]
+    },
+    {
+        "id": "9d6aeea4c36caa4c",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "set global state",
+        "property": "test7",
+        "action": "append",
+        "func": "return msg.payload;",
+        "x": 1080,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "9413f52193f9be10",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "Set Num",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "x": 880,
+        "y": 380,
+        "wires": [
+            [
+                "c7ec046b3fad5790"
+            ]
+        ]
+    },
+    {
+        "id": "c7ec046b3fad5790",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "set global state",
+        "property": "test8",
+        "action": "append",
+        "func": "return msg.payload;",
+        "x": 1080,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "9130e926c08863a6",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "Set Buffer",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[52,49]",
+        "payloadType": "bin",
+        "x": 880,
+        "y": 420,
+        "wires": [
+            [
+                "191dad0439b05f70"
+            ]
+        ]
+    },
+    {
+        "id": "191dad0439b05f70",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "set global state",
+        "property": "test9",
+        "action": "append",
+        "func": "return msg.payload;",
+        "x": 1080,
+        "y": 420,
+        "wires": []
+    }
+]

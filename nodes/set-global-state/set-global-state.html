@@ -6,6 +6,7 @@
         defaults: {
             name: { value: 'set global state' },
             property: { value: '' },
+            action: { value: 'replace' },
             func: { value: 'return msg.payload;' }
         },
         inputs: 1,
@@ -69,6 +70,13 @@
         <label for="node-input-property"><i class="fa fa-tag"></i> State property</label>
         <input type="text" id="node-input-property" placeholder="property">
     </div>
+    <div class="form-row" style="display: flex;">
+        <label for="node-input-action"><i class="fa fa-wrench"></i> Action</label>
+        <select id="node-input-action">
+            <option value="replace">Replace</option>
+            <option value="append">Append</option>
+        </select>
+    </div>
     <div class="form-row">
         <label for="node-input-func"><i class="fa fa-wrench"></i> State value</label>
         <input type="hidden" id="node-input-func">
@@ -95,6 +103,7 @@
     <h3>Inputs</h3>
     <ul>
         <li><code>msg.property</code> (optional) - Overrides the configured property name</li>
+        <li><code>msg.action</code> (optional) - Overrides the configured action (replace or append)</li>
         <li><code>msg.payload</code> - Typically used as the value to set (but can be processed by the function)</li>
     </ul>
     
@@ -103,8 +112,25 @@
         <dt>State property</dt>
         <dd>The name of the property to set in global context. Use dot notation for nested properties (e.g., <code>user.settings.theme</code>).</dd>
         
+        <dt>Action</dt>
+        <dd>
+            <ul>
+                <li><b>Replace</b> - The returned value completely replaces the existing value (default).</li>
+                <li><b>Append</b> - The returned value is appended to the existing value. The behavior depends on the data type:
+                    <ul>
+                        <li>Arrays: New items are added to the end of the existing array</li>
+                        <li>Objects: Properties from the new object are merged into the existing object</li>
+                        <li>Strings: The new string is concatenated to the existing string</li>
+                        <li>Numbers: The values are added together</li>
+                        <li>Buffers: The new buffer is concatenated to the existing buffer</li>
+                    </ul>
+                    If the property doesn't exist yet, the returned value becomes the initial value.
+                </li>
+            </ul>
+        </dd>
+        
         <dt>State value</dt>
-        <dd>A JavaScript function that returns the value to set. The function has access to the incoming <code>msg</code> object.</dd>
+        <dd>A JavaScript function that returns the value to set or append. The function has access to the incoming <code>msg</code> object.</dd>
     </dl>
     
     <h3>Examples</h3>
@@ -127,6 +153,11 @@ return {
     theme: msg.payload.theme || "default"
   }
 };</pre>
+
+    <p><b>Appending to a buffer:</b></p>
+    <p>Configure the Action as <code>Append</code> and use:</p>
+    <pre>// Appends to an existing buffer
+return Buffer.from(msg.payload);</pre>
     
     <h3>Notes</h3>
     <p><b>Important:</b> To ensure proper event handling, all global context values that need to be monitored should be updated using this node. 
