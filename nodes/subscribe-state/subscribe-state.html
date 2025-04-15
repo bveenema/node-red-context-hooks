@@ -164,7 +164,7 @@
 
 <script type="text/html" data-help-name="subscribe-state">
     <h3>About</h3>
-    <p>A node that subscribes to global state updates, including nested property changes.</p>
+    <p>A node that subscribes to global state updates, including nested property changes and wildcard patterns.</p>
     
     <h3>Details</h3>
     <p>This node monitors changes to one or more specified properties in Node-RED's global context. When any of the 
@@ -177,6 +177,14 @@
     to nested properties within objects. For example, if you subscribe to <code>device</code> and a nested property 
     like <code>device.status.online</code> changes, you'll be notified of the change.</p>
     
+    <p><b>Wildcard Support:</b> You can use wildcards (*) in property patterns to subscribe to multiple properties at once:</p>
+    <ul>
+        <li><code>devices.*</code> - Subscribe to all direct children of the devices object</li>
+        <li><code>devices.*.status</code> - Subscribe to the status property of any child under devices</li>
+        <li><code>*.temperature</code> - Subscribe to any temperature property at the root level</li>
+        <li><code>sensors.*.*</code> - Subscribe to all grandchildren of the sensors object</li>
+    </ul>
+    
     <h3>Outputs</h3>
     <p>The output message contains the following properties:</p>
     <ul>
@@ -184,6 +192,12 @@
         <li><code>msg.previousValue</code> - The value before the change</li>
         <li><code>msg.value</code> - The current value after the change</li>
         <li><code>msg.payload</code> - Same as <code>msg.value</code></li>
+    </ul>
+    
+    <p><b>For wildcard matches, additional fields are included:</b></p>
+    <ul>
+        <li><code>msg.subscribedPattern</code> - The original wildcard pattern used</li>
+        <li><code>msg.isWildcardMatch</code> - Set to <code>true</code> for wildcard matches</li>
     </ul>
     
     <p><b>For nested property changes, additional fields are included:</b></p>
@@ -211,5 +225,24 @@
   deepChange: true,
   changedPath: "user.preferences.theme",
   changedProperty: "preferences.theme"
+}</pre>
+
+    <h3>Wildcard Example</h3>
+    <p>If you subscribe to <code>devices.*.temperature</code> and have multiple devices:</p>
+    <pre>{
+  devices: {
+    livingRoom: { temperature: 22, humidity: 45 },
+    bedroom: { temperature: 20, humidity: 50 },
+    kitchen: { temperature: 23, humidity: 48 }
+  }
+}</pre>
+    <p>When <code>devices.bedroom.temperature</code> changes from 20 to 21, you'll receive a message with:</p>
+    <pre>msg = {
+  property: "devices.bedroom.temperature",
+  subscribedPattern: "devices.*.temperature",
+  previousValue: 20,
+  value: 21,
+  payload: 21,
+  isWildcardMatch: true
 }</pre>
 </script>

@@ -1,0 +1,249 @@
+{
+    "log": {
+      "name": "log",
+      "version": "1.0.0",
+      "description": "A flexible logging system for embedded applications with Protocol Buffers support",
+      "type": "SuperLog",
+      "logs": {
+        "name": "logs",
+        "display_name": "Logs",
+        "type": "LogMessage",
+        "description": "The logs",
+        "repeated": true,
+        "read-only": true,
+        "quality": 0
+      },
+      "currentLevel": {
+        "name": "currentLevel",
+        "display_name": "Current Level",
+        "type": "SuperLogLevel",
+        "description": "The current log level threshold",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "setLevel": {
+        "name": "setLevel",
+        "display_name": "Set Level",
+        "type": "SuperLogLevel",
+        "description": "The log level threshold to set",
+        "read-only": false,
+        "value": 0,
+        "quality": 0
+      }
+    },
+    "tankFillValve": {
+      "name": "tankFillValve",
+      "file": "src/main.cpp",
+      "pin_name": "pin_TankFillValve",
+      "version": "1.0.0",
+      "description": "Simple valve model that can be open, closed or traversing.",
+      "type": "Valve",
+      "currentState": {
+        "name": "currentState",
+        "display_name": "Current State",
+        "type": "ValveState",
+        "description": "The current state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "targetState": {
+        "name": "targetState",
+        "display_name": "Target State",
+        "type": "ValveState",
+        "description": "The target state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "setState": {
+        "name": "setState",
+        "display_name": "Set State",
+        "type": "ValveState",
+        "description": "The state to set the valve to",
+        "read-only": false,
+        "value": 0,
+        "quality": 0
+      }
+    },
+    "citySupplyValve": {
+      "name": "citySupplyValve",
+      "file": "src/main.cpp",
+      "pin_name": "pin_CitySupplyValve",
+      "version": "1.0.0",
+      "description": "Simple valve model that can be open, closed or traversing.",
+      "type": "Valve",
+      "currentState": {
+        "name": "currentState",
+        "display_name": "Current State",
+        "type": "ValveState",
+        "description": "The current state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "targetState": {
+        "name": "targetState",
+        "display_name": "Target State",
+        "type": "ValveState",
+        "description": "The target state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "setState": {
+        "name": "setState",
+        "display_name": "Set State",
+        "type": "ValveState",
+        "description": "The state to set the valve to",
+        "read-only": false,
+        "value": 0,
+        "quality": 0
+      }
+    },
+    "waterShutoffValve": {
+      "name": "waterShutoffValve",
+      "file": "src/main.cpp",
+      "pin_name": "pin_WaterShutoffValve",
+      "version": "1.0.0",
+      "description": "Simple valve model that can be open, closed or traversing.",
+      "type": "Valve",
+      "currentState": {
+        "name": "currentState",
+        "display_name": "Current State",
+        "type": "ValveState",
+        "description": "The current state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "targetState": {
+        "name": "targetState",
+        "display_name": "Target State",
+        "type": "ValveState",
+        "description": "The target state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "setState": {
+        "name": "setState",
+        "display_name": "Set State",
+        "type": "ValveState",
+        "description": "The state to set the valve to",
+        "read-only": false,
+        "value": 0,
+        "quality": 0
+      }
+    },
+    "filterBypassValve": {
+      "name": "filterBypassValve",
+      "file": "src/main.cpp",
+      "pin_name": "pin_FilterBypassValve",
+      "version": "1.0.0",
+      "description": "Simple valve model that can be open, closed or traversing.",
+      "type": "Valve",
+      "currentState": {
+        "name": "currentState",
+        "display_name": "Current State",
+        "type": "ValveState",
+        "description": "The current state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "targetState": {
+        "name": "targetState",
+        "display_name": "Target State",
+        "type": "ValveState",
+        "description": "The target state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "setState": {
+        "name": "setState",
+        "display_name": "Set State",
+        "type": "ValveState",
+        "description": "The state to set the valve to",
+        "read-only": false,
+        "value": 0,
+        "quality": 0
+      }
+    },
+    "heaterByPassValve": {
+      "name": "heaterByPassValve",
+      "file": "src/main.cpp",
+      "pin_name": "pin_HeaterByPassValve",
+      "version": "1.0.0",
+      "description": "Simple valve model that can be open, closed or traversing.",
+      "type": "Valve",
+      "currentState": {
+        "name": "currentState",
+        "display_name": "Current State",
+        "type": "ValveState",
+        "description": "The current state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "targetState": {
+        "name": "targetState",
+        "display_name": "Target State",
+        "type": "ValveState",
+        "description": "The target state of the valve",
+        "read-only": true,
+        "value": 0,
+        "quality": 0
+      },
+      "setState": {
+        "name": "setState",
+        "display_name": "Set State",
+        "type": "ValveState",
+        "description": "The state to set the valve to",
+        "read-only": false,
+        "value": 0,
+        "quality": 0
+      }
+    },
+    "view": {
+      "valveTable": [
+        {
+          "Name": "tankFillValve",
+          "Pin": "pin_TankFillValve",
+          "currentState": 0,
+          "targetState": 0,
+          "setState": 0
+        },
+        {
+          "Name": "citySupplyValve",
+          "Pin": "pin_CitySupplyValve",
+          "currentState": 0,
+          "targetState": 0,
+          "setState": 0
+        },
+        {
+          "Name": "waterShutoffValve",
+          "Pin": "pin_WaterShutoffValve",
+          "currentState": 0,
+          "targetState": 0,
+          "setState": 0
+        },
+        {
+          "Name": "filterBypassValve",
+          "Pin": "pin_FilterBypassValve",
+          "currentState": 0,
+          "targetState": 0,
+          "setState": 0
+        },
+        {
+          "Name": "heaterByPassValve",
+          "Pin": "pin_HeaterByPassValve",
+          "currentState": 0,
+          "targetState": 0,
+          "setState": 0
+        }
+      ]
+    }
+  }

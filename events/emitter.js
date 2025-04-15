@@ -1,9 +1,18 @@
-const EventEmitter = require('events');
+/**
+ * Event emitter module - redirects to registry for demand-driven approach
+ * Provides backward compatibility with existing code
+ */
 
-EventEmitter.EventEmitter.defaultMaxListeners = 30;
-
-const emitter = new EventEmitter();
+const registry = require('./registry');
 
 module.exports = {
-    getEmitter: () => emitter,
+    // For backward compatibility
+    getEmitter: () => registry.emitter,
+    
+    // New methods
+    subscribe: registry.subscribe,
+    publish: registry.publish,
+    getPatterns: registry.getPatterns,
+    clearSubscriptions: registry.clearSubscriptions,
+    getNextChangeToken: registry.getNextChangeToken
 };

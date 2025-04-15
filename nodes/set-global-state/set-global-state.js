@@ -1,5 +1,5 @@
 const { isEqual, cloneDeep, merge } = require('lodash');
-const { getEmitter } = require('../../events/emitter');
+const { publish, getNextChangeToken } = require('../../events/emitter');
 
 module.exports = function(RED) {
     function SetGlobalState(config) {
@@ -9,50 +9,78 @@ module.exports = function(RED) {
         let { property } = config;
         const global = node.context().global;
 
-        // Function to emit events for property and all parent paths
-        const emitPropertyAndParents = (propPath, previousValue, value) => {
-            // Emit for the exact property
-            getEmitter().emit(propPath, {
+        // Function to publish events for property and all parent paths
+        const publishPropertyAndParents = (propPath, previousValue, value) => {
+            // Generate a single change token for this entire operation
+            const changeToken = getNextChangeToken();
+            
+            // For leaf property updates, just publish for the exact property
+            if (!propPath.includes('.')) {
+                publish(propPath, {
+                    previousValue,
+                    value,
+                }, { changeToken });
+                return;
+            }
+            
+            // For nested properties, we need to handle parent paths carefully
+            const parts = propPath.split('.');
+            
+            // First, publish the event for the exact property that changed
+            // This is the primary change
+            publish(propPath, {
                 previousValue,
                 value,
+            }, { 
+                changeToken,
+                isPropagated: false // This is the primary property that changed
             });
-
-            // If this is already a nested property, emit events for parent paths
-            if (propPath.includes('.')) {
-                const parts = propPath.split('.');
+            
+            // Set up data for the parent update
+            const rootPath = parts[0];
+            const rootPrevious = global.get(rootPath);
+            
+            // Get a clone of the current full object after the update
+            const rootCurrent = global.get(rootPath);
+            
+            // Only publish one event for the root object with details about the nested change
+            // This is a propagated notification
+            publish(rootPath, {
+                previousValue: rootPrevious,
+                value: rootCurrent,
+                changedPath: propPath,
+                changedProperty: propPath.substring(rootPath.length + 1),
+                deepChange: true
+            }, { 
+                changeToken,
+                isPropagated: true // This is a propagated notification
+            });
+            
+            // For complex hierarchies where we want intermediate path notifications,
+            // uncomment and modify this code:
+            /*
+            // For each intermediate level in the hierarchy, emit an event
+            for (let i = 2; i < parts.length; i++) {
+                // Get the parent path at this level
+                const parentPath = parts.slice(0, i).join('.');
                 
-                // Get the parent object's full path
-                const parentPath = parts[0];
+                // Get the parent objects
+                const parentPreviousValue = global.get(parentPath);
+                const parentCurrentValue = global.get(parentPath);
                 
-                // Get the previous and current full parent objects
-                let parentPreviousValue = global.get(parentPath);
-                let parentCurrentValue = cloneDeep(parentPreviousValue);
-                
-                // Apply the change to a copy for the current value
-                const leafProperty = parts[parts.length - 1];
-                let target = parentCurrentValue;
-                
-                // Navigate to the right place in the object
-                for (let i = 1; i < parts.length - 1; i++) {
-                    target = target[parts[i]];
-                }
-                
-                // Update the leaf value
-                target[leafProperty] = value;
-                
-                // Update the global context with the new value
-                global.set(parentPath, parentCurrentValue);
-                
-                // Emit the event for the parent with correct previous and current values,
-                // and include information about the nested property that changed
-                getEmitter().emit(parentPath, {
+                // Publish the event for this intermediate parent
+                publish(parentPath, {
                     previousValue: parentPreviousValue,
                     value: parentCurrentValue,
                     changedPath: propPath,
                     changedProperty: propPath.substring(parentPath.length + 1),
                     deepChange: true
+                }, { 
+                    changeToken,
+                    isPropagated: true
                 });
             }
+            */
         };
 
         node.on('input', function(msg, send, done) {
@@ -140,13 +168,11 @@ module.exports = function(RED) {
                     return;
                 }
 
-                // For leaf properties, simply set the value
-                if (!property.includes('.')) {
-                    global.set(property, finalValue);
-                }
+                // Set the value in global context
+                global.set(property, finalValue);
 
-                // Emit events for this property and any parent paths
-                emitPropertyAndParents(property, previousValue, finalValue);
+                // Publish events for this property and all parent paths
+                publishPropertyAndParents(property, previousValue, finalValue);
 
                 // This call is wrapped in a check that 'done' exists
                 // so the node will work in earlier versions of Node-RED (<1.0)

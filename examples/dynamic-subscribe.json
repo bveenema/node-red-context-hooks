@@ -1,0 +1,205 @@
+[
+    {
+        "id": "e9c02a1111bfb965",
+        "type": "group",
+        "z": "f6f2187d.f17ca8",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "9bcf6c2fc0b5b64b",
+            "abbe8c26186ebaa5",
+            "6f53d7f785e7ae15",
+            "a909a087a1d14f1b",
+            "4bf609d928fc23b7",
+            "e280121010b0a437",
+            "ff4e611942baab3a",
+            "f834149cb13e7daa",
+            "7db5cf65e900fb1b",
+            "b675ec0cce33be11"
+        ],
+        "x": 754,
+        "y": 559,
+        "w": 432,
+        "h": 362
+    },
+    {
+        "id": "9bcf6c2fc0b5b64b",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "Dynamic Subscribe Flow",
+        "info": "",
+        "x": 890,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "abbe8c26186ebaa5",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "set global state",
+        "property": "test10",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 1080,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "6f53d7f785e7ae15",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "Set Object",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"log\":{\"name\":\"log\",\"version\":\"1.0.0\",\"description\":\"A flexible logging system for embedded applications with Protocol Buffers support\",\"type\":\"SuperLog\",\"logs\":{\"name\":\"logs\",\"display_name\":\"Logs\",\"type\":\"LogMessage\",\"description\":\"The logs\",\"repeated\":true,\"read-only\":true,\"quality\":0},\"currentLevel\":{\"name\":\"currentLevel\",\"display_name\":\"Current Level\",\"type\":\"SuperLogLevel\",\"description\":\"The current log level threshold\",\"read-only\":true,\"value\":0,\"quality\":0},\"setLevel\":{\"name\":\"setLevel\",\"display_name\":\"Set Level\",\"type\":\"SuperLogLevel\",\"description\":\"The log level threshold to set\",\"read-only\":false,\"value\":0,\"quality\":0}},\"tankFillValve\":{\"name\":\"tankFillValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_TankFillValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"citySupplyValve\":{\"name\":\"citySupplyValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_CitySupplyValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"waterShutoffValve\":{\"name\":\"waterShutoffValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_WaterShutoffValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"filterBypassValve\":{\"name\":\"filterBypassValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_FilterBypassValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"heaterByPassValve\":{\"name\":\"heaterByPassValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_HeaterByPassValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"view\":{\"valveTable\":[{\"Name\":\"tankFillValve\",\"Pin\":\"pin_TankFillValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"citySupplyValve\",\"Pin\":\"pin_CitySupplyValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"waterShutoffValve\",\"Pin\":\"pin_WaterShutoffValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"filterBypassValve\",\"Pin\":\"pin_FilterBypassValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"heaterByPassValve\",\"Pin\":\"pin_HeaterByPassValve\",\"currentState\":0,\"targetState\":0,\"setState\":0}]}}",
+        "payloadType": "json",
+        "x": 880,
+        "y": 640,
+        "wires": [
+            [
+                "abbe8c26186ebaa5"
+            ]
+        ]
+    },
+    {
+        "id": "a909a087a1d14f1b",
+        "type": "subscribe-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "subscribe state",
+        "properties": [
+            "test10"
+        ],
+        "x": 860,
+        "y": 880,
+        "wires": [
+            [
+                "4bf609d928fc23b7"
+            ]
+        ]
+    },
+    {
+        "id": "4bf609d928fc23b7",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "e280121010b0a437",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "set global state",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 1080,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "ff4e611942baab3a",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 890,
+        "y": 680,
+        "wires": [
+            [
+                "e280121010b0a437",
+                "b675ec0cce33be11"
+            ]
+        ]
+    },
+    {
+        "id": "f834149cb13e7daa",
+        "type": "subscribe-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "subscribe state",
+        "properties": [
+            "test10.*.currentState"
+        ],
+        "x": 860,
+        "y": 840,
+        "wires": [
+            [
+                "7db5cf65e900fb1b"
+            ]
+        ]
+    },
+    {
+        "id": "7db5cf65e900fb1b",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "b675ec0cce33be11",
+        "type": "set-global-state",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "set global state",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 1080,
+        "y": 720,
+        "wires": []
+    }
+]

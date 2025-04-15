@@ -1,6 +1,6 @@
 const strip = require('strip-comments');
 
-const { getEmitter } = require('../../events/emitter.js');
+const { subscribe } = require('../../events/emitter.js');
 
 module.exports = function(RED) {
     function StateHook(config) {
@@ -9,7 +9,7 @@ module.exports = function(RED) {
         const global = node.context().global;
 
         const code = strip(config.func);
-        const watchedValues = [];
+        const subscriptions = []; // Store subscription objects instead of property names
 
         let timer;
 
@@ -41,14 +41,23 @@ module.exports = function(RED) {
         }
 
         const useGlobal = (property, defaultValue = null) => {
-            if (!watchedValues.includes(property)) {
-                watchedValues.push(property);
-
-                getEmitter().on(property, () => {
+            // Check if we're already subscribed to this property
+            const existingSubscription = subscriptions.find(sub => sub.property === property);
+            
+            if (!existingSubscription) {
+                // Create new subscription using the subscription registry
+                const subscription = subscribe(property, () => {
                     runCode();
+                });
+                
+                // Store property with subscription for tracking
+                subscriptions.push({
+                    property,
+                    subscription
                 });
             }
 
+            // Get the current value from global context
             let stateValue = global.get(property);
 
             if (undefined === stateValue || null === stateValue) {
@@ -58,11 +67,16 @@ module.exports = function(RED) {
             return stateValue;
         };
 
+        // Define on global object for use in function code
+        this.context().global.set('_useGlobal', useGlobal);
+
         node.on('close', () => {
-            watchedValues.forEach(watched => getEmitter().removeAllListeners(watched));
-            watchedValues.splice(0, watchedValues.length);
+            // Unsubscribe from all properties
+            subscriptions.forEach(sub => sub.subscription.unsubscribe());
+            subscriptions.length = 0; // Clear array
         });
 
+        // Initial run after a short delay
         setTimeout(runCode, 2000 + Math.random() * 2000);
     }
 
