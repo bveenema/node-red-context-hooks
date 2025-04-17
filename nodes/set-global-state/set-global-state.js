@@ -1,5 +1,6 @@
 const { isEqual, cloneDeep, merge } = require('lodash');
 const { publish, getNextChangeToken } = require('../../events/emitter');
+const PubSub = require('pubsub-js');
 
 module.exports = function(RED) {
     function SetGlobalState(config) {
@@ -11,50 +12,80 @@ module.exports = function(RED) {
 
         // Function to publish events for property and all parent paths
         const publishPropertyAndParents = (propPath, previousValue, value) => {
+            node.warn("[publish] Publish property and parents:")
+            node.warn(propPath);
+            node.warn(previousValue);
+            node.warn(value);
             // Generate a single change token for this entire operation
             const changeToken = getNextChangeToken();
             
-            // For leaf property updates, just publish for the exact property
+            // For top-level property updates, just publish for the exact property
             if (!propPath.includes('.')) {
+                node.warn(`[publish - ${propPath}] top-level property update`)
                 publish(propPath, {
                     previousValue,
                     value,
+                    changedPath: propPath,
+                    changedProperty: propPath,
+                    deepChange: false
                 }, { changeToken });
                 return;
             }
-            
+
             // For nested properties, we need to handle parent paths carefully
             const parts = propPath.split('.');
+            for (let i = 1; i < parts.length; i++) {
+                // Get the parent path at this level
+                const parentPath = parts.slice(0, i).join('.');
+                node.warn(`[publish - ${propPath}] Parent path: ${parentPath}`);
+                
+                // Get the parent objects
+                const parentPreviousValue = global.get(parentPath);
+                const parentCurrentValue = global.get(parentPath);
+                
+                // Publish the event for this intermediate parent
+                publish(parentPath, {
+                    previousValue: parentPreviousValue,
+                    value: parentCurrentValue,
+                    changedPath: propPath,
+                    changedProperty: propPath.substring(parentPath.length + 1),
+                    deepChange: true
+                }, { 
+                    changeToken,
+                    isPropagated: true
+                });
+            }
             
+        
             // First, publish the event for the exact property that changed
-            // This is the primary change
-            publish(propPath, {
-                previousValue,
-                value,
-            }, { 
-                changeToken,
-                isPropagated: false // This is the primary property that changed
-            });
+            // // This is the primary change
+            // publish(propPath, {
+            //     previousValue,
+            //     value,
+            // }, { 
+            //     changeToken,
+            //     isPropagated: false // This is the primary property that changed
+            // });
             
-            // Set up data for the parent update
-            const rootPath = parts[0];
-            const rootPrevious = global.get(rootPath);
+            // // Set up data for the parent update
+            // const rootPath = parts[0];
+            // const rootPrevious = global.get(rootPath);
             
-            // Get a clone of the current full object after the update
-            const rootCurrent = global.get(rootPath);
+            // // Get a clone of the current full object after the update
+            // const rootCurrent = global.get(rootPath);
             
-            // Only publish one event for the root object with details about the nested change
-            // This is a propagated notification
-            publish(rootPath, {
-                previousValue: rootPrevious,
-                value: rootCurrent,
-                changedPath: propPath,
-                changedProperty: propPath.substring(rootPath.length + 1),
-                deepChange: true
-            }, { 
-                changeToken,
-                isPropagated: true // This is a propagated notification
-            });
+            // // Only publish one event for the root object with details about the nested change
+            // // This is a propagated notification
+            // publish(rootPath, {
+            //     previousValue: rootPrevious,
+            //     value: rootCurrent,
+            //     changedPath: propPath,
+            //     changedProperty: propPath.substring(rootPath.length + 1),
+            //     deepChange: true
+            // }, { 
+            //     changeToken,
+            //     isPropagated: true // This is a propagated notification
+            // });
             
             // For complex hierarchies where we want intermediate path notifications,
             // uncomment and modify this code:
@@ -94,12 +125,16 @@ module.exports = function(RED) {
             try {
                 const previousValue = global.get(property);
 
+                // Process the user function to get the final value
                 let value;
                 eval(`value = function() {${config.func}}();`);
 
                 node.status({});
 
                 if (value === undefined) {
+                    node.error(`[set-global-state - ${property}] Value is undefined`, msg);
+                    node.status({ fill: 'red', shape: 'ring', text: 'error' });
+                    if (done) done();
                     return;
                 }
 

@@ -13,27 +13,62 @@ const subscriptions = new Map();
 // Track change operations - each distinct property change gets a unique change token
 let currentChangeToken = 0;
 
+// Store compiled RegExp objects for regex patterns
+const regexCache = new Map();
+
 /**
  * Register a subscription for a property pattern
- * @param {string} pattern - Property pattern (can include wildcards: *)
+ * @param {string} pattern - Property pattern (string with optional wildcards or regex)
+ * @param {string} patternType - Type of pattern: "str" or "re"
  * @param {Function} callback - Callback to call when the property changes
  * @returns {Object} - An object with an unsubscribe method
  */
-function subscribe(pattern, callback) {
+function subscribe(pattern, patternType, callback) {
+    // // For backward compatibility - if patternType is a function, it's the callback
+    // if (typeof patternType === 'function') {
+    //     callback = patternType;
+    //     patternType = 'str'; // Default to string type (which handles wildcards)
+    // }
+    
+    // // Handle legacy 'wild' type for backward compatibility
+    // if (patternType === 'wild') {
+    //     patternType = 'str'; // Convert to string type
+    // }
+    
+    // Generate a unique key for this subscription
+    const subKey = `${patternType}:${pattern}`;
+    
     // Add to subscriptions map
-    if (!subscriptions.has(pattern)) {
-        subscriptions.set(pattern, new Set());
+    if (!subscriptions.has(subKey)) {
+        subscriptions.set(subKey, {
+            pattern,
+            patternType,
+            callbacks: new Set()
+        });
+        
+        // For regex patterns, compile and cache the RegExp object
+        if (patternType === 're' && !regexCache.has(pattern)) {
+            try {
+                regexCache.set(pattern, new RegExp(pattern));
+            } catch (error) {
+                console.error(`Invalid regex pattern: ${pattern}`, error);
+                // Use an impossible regex (will never match anything)
+                regexCache.set(pattern, /^$/);
+            }
+        }
     }
-    subscriptions.get(pattern).add(callback);
+    
+    // Add this callback to the set
+    subscriptions.get(subKey).callbacks.add(callback);
     
     // Return unsubscribe function
     return {
         unsubscribe: () => {
-            const callbacks = subscriptions.get(pattern);
-            if (callbacks) {
-                callbacks.delete(callback);
-                if (callbacks.size === 0) {
-                    subscriptions.delete(pattern);
+            const sub = subscriptions.get(subKey);
+            if (sub) {
+                sub.callbacks.delete(callback);
+                if (sub.callbacks.size === 0) {
+                    subscriptions.delete(subKey);
                 }
             }
         }
@@ -41,37 +76,70 @@ function subscribe(pattern, callback) {
 }
 
 /**
- * Check if a property matches a pattern (with wildcard support)
+ * Check if a property matches a pattern, considering pattern type
  * @param {string} property - The property path
- * @param {string} pattern - The pattern (can include *)
+ * @param {string} pattern - The pattern
+ * @param {string} patternType - Type of pattern: "str" or "re"
  * @returns {boolean} - Whether the property matches the pattern
  */
-function matchesPattern(property, pattern) {
-    // Direct match
-    if (property === pattern) {
-        return true;
+function matchesPattern(property, pattern, patternType) {
+    // Handle different pattern types
+    switch (patternType) {
+        case 're': // Regex pattern
+            const regex = regexCache.get(pattern) || new RegExp(pattern);
+            return regex.test(property);
+            
+        case 'str': // String pattern (may include wildcards)
+        default:
+            // If pattern contains wildcard, use wildcard matching
+            if (pattern.includes('*')) {
+                return matchesWildcardPattern(property, pattern);
+            }
+            
+            // Direct match
+            if (property === pattern) {
+                return true;
+            }
+            
+            // Check if pattern is an ancestor of property
+            return property.startsWith(pattern + '.');
+    }
+}
+
+/**
+ * Check if a property matches a wildcard pattern
+ * @param {string} property - The property path
+ * @param {string} pattern - The wildcard pattern (with * characters)
+ * @returns {boolean} - Whether the property matches the pattern
+ */
+function matchesWildcardPattern(property, pattern) {
+    // Split both into parts
+    const patternParts = pattern.split('.');
+    const propertyParts = property.split('.');
+    
+    // Property must have at least as many parts as the pattern
+    if (propertyParts.length < patternParts.length) {
+        return false;
     }
     
-    // If pattern contains wildcard
-    if (pattern.includes('*')) {
-        // Convert pattern to regex
-        const regexPattern = pattern
-            .replace(/\./g, '\\.')  // Escape dots
-            .replace(/\*/g, '.*');  // Replace * with .*
+    // Check each pattern part against the corresponding property part
+    for (let i = 0; i < patternParts.length; i++) {
+        const patternPart = patternParts[i];
+        const propertyPart = propertyParts[i];
         
-        const regex = new RegExp(`^${regexPattern}$`);
-        return regex.test(property);
+        // If this part is a wildcard, it matches anything
+        if (patternPart === '*') {
+            continue;
+        }
+        
+        // Otherwise, parts must match exactly
+        if (patternPart !== propertyPart) {
+            return false;
+        }
     }
     
-    // Check if property is a direct child of pattern
-    if (pattern.endsWith('.*')) {
-        const prefix = pattern.slice(0, -2);
-        const parts = property.split('.');
-        return property.startsWith(prefix + '.') && parts.length === prefix.split('.').length + 1;
-    }
-    
-    // Nested property match (property starts with pattern followed by dot)
-    return property.startsWith(pattern + '.'); 
+    // All pattern parts matched, so this is a match
+    return true;
 }
 
 /**
@@ -101,13 +169,22 @@ function publish(property, data, options = {}) {
         isPropagated
     };
     
-    // Find all matching patterns
-    for (const [pattern, callbacks] of subscriptions.entries()) {
-        if (matchesPattern(property, pattern)) {
+    // Find all matching patterns and notify their callbacks
+    for (const [subKey, sub] of subscriptions.entries()) {
+        const { pattern, patternType, callbacks } = sub;
+        
+        if (matchesPattern(property, pattern, patternType)) {
+            // Add pattern info to the data for this subscriber
+            const subscriberData = {
+                ...enhancedData,
+                subscribedPattern: pattern,
+                patternType
+            };
+            
             // Notify all callbacks for this pattern
             for (const callback of callbacks) {
                 try {
-                    callback(property, enhancedData);
+                    callback(property, subscriberData);
                 } catch (err) {
                     console.error(`Error in subscription callback for ${pattern}:`, err);
                 }
@@ -121,10 +198,13 @@ function publish(property, data, options = {}) {
 
 /**
  * Get all registered patterns
- * @returns {Array} - Array of patterns
+ * @returns {Array} - Array of pattern objects with pattern and type
  */
 function getPatterns() {
-    return Array.from(subscriptions.keys());
+    return Array.from(subscriptions.entries()).map(([_, sub]) => ({
+        pattern: sub.pattern,
+        type: sub.patternType
+    }));
 }
 
 /**
@@ -132,6 +212,7 @@ function getPatterns() {
  */
 function clearSubscriptions() {
     subscriptions.clear();
+    regexCache.clear();
 }
 
 module.exports = {

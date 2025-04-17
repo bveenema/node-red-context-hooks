@@ -2,7 +2,13 @@
   "name": "@bveenema/node-red-context-hook",
   "version": "1.0.3",
   "description": "Nodes for managing global context state in Node-RED platform using pub/sub",
-  "keywords": ["node-red", "node-red-contrib", "state", "publish", "subscribe"],
+  "keywords": [
+    "node-red",
+    "node-red-contrib",
+    "state",
+    "publish",
+    "subscribe"
+  ],
   "homepage": "https://github.com/bveenema/node-red-context-hook#readme",
   "main": "state-hook.js",
   "node-red": {
@@ -27,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21",
+    "pubsub-js": "^1.9.5",
     "strip-comments": "^2.0.1"
   },
   "devDependencies": {

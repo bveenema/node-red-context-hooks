@@ -8,8 +8,17 @@ module.exports = function(RED) {
         // Ensure properties is an array
         const properties = Array.isArray(config.properties) ? config.properties : (config.property ? [config.property] : []);
         
+        // Ensure propertyTypes is an array with matching length
+        const propertyTypes = Array.isArray(config.propertyTypes) && config.propertyTypes.length === properties.length 
+            ? config.propertyTypes 
+            : Array(properties.length).fill("str");
+        
         // Skip empty properties
-        const validProperties = properties.filter(prop => prop && prop.trim() !== '');
+        const validProperties = properties.filter((prop, i) => prop && prop.trim() !== '')
+            .map((prop, i) => ({ 
+                pattern: prop.trim(), 
+                type: propertyTypes[i] || "str"
+            }));
         
         // Get the global context to access its methods
         const global = node.context().global;
@@ -22,8 +31,8 @@ module.exports = function(RED) {
         // Format: { token => timestamp }
         const processedTokens = new Map();
         
-        // Max number of tokens to remember (to prevent memory leaks)
-        const MAX_TOKENS = 1000;
+        // Much lower token limit for memory efficiency
+        const MAX_TOKENS = 50;
         
         // Time to keep tokens in memory (5 minutes)
         const TOKEN_RETENTION_MS = 5 * 60 * 1000;
@@ -48,14 +57,28 @@ module.exports = function(RED) {
                 changedProperty: nestedChangedProperty, 
                 deepChange,
                 changeToken,
-                isPropagated
+                isPropagated,
+                subscribedPattern,
+                patternType
             } = data;
             
             // If we've already processed this token for this subscription node, skip
             if (processedTokens.has(changeToken)) {
+                node.warn(`[subscribe - ${this.name}] Already processed this token:  ${changeToken}`)
                 return;
             }
-            
+
+            node.send({
+                changedProperty,
+                changedPath,
+                previousValue,
+                value,
+                payload: value,
+                isPropagated,
+                subscribedPattern,
+                patternType
+            })
+
             // Record that we've processed this token with current timestamp
             processedTokens.set(changeToken, Date.now());
             
@@ -70,90 +93,77 @@ module.exports = function(RED) {
                 entries.forEach(([token, time]) => processedTokens.set(token, time));
             }
             
-            // Find which of our subscribed properties matches this change
-            const matchingProperty = validProperties.find(prop => {
-                // For wildcards, we already know it's a match (handled by registry)
-                if (prop.includes('*')) {
-                    return true;
-                }
-                // Direct match
-                if (changedProperty === prop) {
-                    return true;
-                }
-                // Deep match (nested property)
-                if (changedProperty.startsWith(prop + '.')) {
-                    return true;
-                }
-                return false;
-            });
-            
-            if (!matchingProperty) {
-                return; // Not relevant to our subscriptions
-            }
-            
-            // For propagated events, only process them if we're watching the parent directly
-            if (isPropagated && changedProperty !== matchingProperty) {
-                return;
-            }
-            
-            // If the matching property is a wildcard, handle it differently
-            if (matchingProperty.includes('*')) {
-                // For wildcard matches, just send the exact property that changed
-                node.send({
-                    property: changedProperty,
-                    subscribedPattern: matchingProperty,
-                    previousValue,
-                    value,
-                    payload: value,
-                    isWildcardMatch: true
-                });
-                return;
-            }
-            
-            // For direct property match, just send it
-            if (changedProperty === matchingProperty) {
-                // Construct the message
-                const msg = {
-                    property: matchingProperty,
-                    previousValue,
-                    value,
-                    payload: value,
-                };
+            // // If this is a pattern match
+            // if (patternType === 're' || (patternType === 'str' && subscribedPattern.includes('*'))) {
+            //     // Get the full object at the matched property path
+            //     const fullObject = global.get(changedProperty);
+            //     node.warn("[subscribe] Pattern match")
                 
-                // If this was a nested property change, include that information
-                if (deepChange) {
-                    msg.changedPath = changedPath;
-                    msg.changedProperty = nestedChangedProperty;
-                    msg.deepChange = true;
-                }
-                
-                node.send(msg);
-                return;
-            }
+            //     // For pattern matches, include the full object along with the value
+            //     node.send({
+            //         property: changedProperty,
+            //         subscribedPattern,
+            //         patternType: patternType === 're' ? 'regex' : 'wildcard',
+            //         previousValue,
+            //         value,
+            //         fullObject,
+            //         payload: fullObject || value, // Use the full object as payload, fallback to value
+            //         isPatternMatch: true
+            //     });
+            //     return;
+            // }
             
-            // For deep property changes, get the parent object and send additional info
-            if (changedProperty.startsWith(matchingProperty + '.')) {
-                const fullObject = global.get(matchingProperty);
-                node.send({
-                    property: changedProperty,
-                    subscribedProperty: matchingProperty,
-                    changedProperty: changedProperty.substring(matchingProperty.length + 1),
-                    previousValue,
-                    value,
-                    fullObject,
-                    payload: fullObject,
-                });
-            }
+            // // For direct property match (string type), use the original logic
+            // if (changedProperty === subscribedPattern) {
+            //     node.warn(`[subscribe - ${this.name}] Direct property match: ${changedProperty} === ${subscribedPattern}`)
+            //     // Construct the message
+            //     const msg = {
+            //         property: subscribedPattern,
+            //         previousValue,
+            //         value,
+            //         payload: value,
+            //     };
+                
+            //     // If this was a nested property change, include that information
+            //     if (deepChange) {
+            //         msg.changedPath = changedPath;
+            //         msg.changedProperty = nestedChangedProperty;
+            //         msg.deepChange = true;
+            //     }
+                
+            //     node.send(msg);
+            //     return;
+            // }
+            
+            // // For deep property changes with string type
+            // if (changedProperty.startsWith(subscribedPattern + '.')) {
+            //     node.warn(`[subscribe - ${this.name}] Deep property change: ${changedProperty} starts with ${subscribedPattern}`)
+            //     // Get the full parent object
+            //     const fullObject = global.get(subscribedPattern);
+            //     node.warn("[subscribe] Deep property change")
+            //     node.send({
+            //         property: changedProperty,
+            //         subscribedProperty: subscribedPattern,
+            //         changedProperty: changedProperty.substring(subscribedPattern.length + 1),
+            //         previousValue,
+            //         value,
+            //         fullObject,
+            //         payload: fullObject,
+            //     });
+            // }
         };
         
         // Setup subscriptions for all properties
         validProperties.forEach(prop => {
             // Subscribe to the pattern
-            const subscription = subscribe(prop, processChange);
+            const subscription = subscribe(prop.pattern, prop.type, processChange);
             subscriptions.push(subscription);
             
             // Log information about the subscription
-            node.status({ fill: "green", shape: "dot", text: `Subscribed: ${validProperties.join(', ')}` });
+            let typeName = prop.type === 'str' ? 
+                (prop.pattern.includes('*') ? 'Wildcard' : 'String') : 
+                'RegExp';
+            node.status({ fill: "green", shape: "dot", text: `${validProperties.length} subscriptions` });
         });
         
         // Cleanup subscriptions when node is removed

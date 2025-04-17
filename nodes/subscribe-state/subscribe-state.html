@@ -3,8 +3,9 @@
         category: 'state',
         color: '#c0deed',
         defaults: {
-            name: { value: 'subscribe state' },
+            name: { value: '' },
             properties: { value: [""] },
+            propertyTypes: { value: ["str"] }
         },
         inputs: 0,
         outputs: 1,
@@ -32,8 +33,13 @@
                 node.properties = [""];
             }
             
+            // Ensure propertyTypes is an array with matching length
+            if (!node.propertyTypes || !Array.isArray(node.propertyTypes) || node.propertyTypes.length !== node.properties.length) {
+                node.propertyTypes = Array(node.properties.length).fill("str");
+            }
+            
             // Function to create a property row
-            function createPropertyRow(index, value) {
+            function createPropertyRow(index, value, type) {
                 var container = $('<div/>', {class: "form-row subscribe-property-row"});
                 
                 // Label changes based on number of properties
@@ -50,16 +56,12 @@
                 
                 container.append(label);
                 
-                // Property input field - use the same structure as the default form rows
-                var input = $('<input/>', {
+                // Create the TypedInput for property - similar to switch node
+                var propertyValue = $('<input/>', {
                     id: "node-input-property-" + index,
                     type: "text",
-                    style: "width: calc(100% - 180px);",
-                    placeholder: "property",
-                    value: value || ""
-                });
-                
-                container.append(input);
+                    style: "width: calc(100% - 180px);"
+                }).appendTo(container);
                 
                 // Add remove button for all except the first property
                 if (index > 0) {
@@ -80,6 +82,36 @@
                     
                     container.append(removeButton);
                 }
+                
+                // Initialize the TypedInput
+                propertyValue.typedInput({
+                    default: 'str',
+                    types: [
+                        {
+                            value: "str",
+                            label: "string",
+                            icon:"red/images/typedInput/az.svg",
+                            validate: function(v) { return true; }
+                        },
+                        {
+                            value: "re",
+                            label: "regex",
+                            icon: "red/images/typedInput/re.svg",
+                            validate: function(v) { 
+                                try {
+                                    new RegExp(v);
+                                    return true;
+                                } catch(e) {
+                                    return false;
+                                }
+                            }
+                        }
+                    ]
+                });
+                
+                // Set the value and type
+                propertyValue.typedInput('value', value);
+                propertyValue.typedInput('type', type);
                 
                 return container;
             }
@@ -102,7 +134,7 @@
             
             // Add existing properties
             for (var i = 0; i < node.properties.length; i++) {
-                propertiesContainer.append(createPropertyRow(i, node.properties[i]));
+                propertiesContainer.append(createPropertyRow(i, node.properties[i], node.propertyTypes[i]));
             }
             
             // Add button to add more properties
@@ -117,7 +149,7 @@
                 e.preventDefault();
                 var rows = $("#subscribe-properties-container").children(".subscribe-property-row");
                 var newIndex = rows.length;
-                var newRow = createPropertyRow(newIndex, "");
+                var newRow = createPropertyRow(newIndex, "", "str");
                 propertiesContainer.append(newRow);
                 updatePropertyLabels();
                 return false;
@@ -128,25 +160,31 @@
         oneditsave: function() {
             var node = this;
             var properties = [];
+            var propertyTypes = [];
             
             // Get name value
             node.name = $("#node-input-name").val();
             
-            // Collect all property values
+            // Collect all property values and types
             $(".subscribe-property-row").each(function() {
                 var propInput = $(this).find("input[type='text']");
-                var value = propInput.val().trim();
+                var value = propInput.typedInput('value').trim();
+                var type = propInput.typedInput('type');
+                
                 if (value) {
                     properties.push(value);
+                    propertyTypes.push(type);
                 }
             });
             
             // Ensure we have at least one property (can be empty)
             if (properties.length === 0) {
                 properties = [""];
+                propertyTypes = ["str"];
             }
             
             node.properties = properties;
+            node.propertyTypes = propertyTypes;
         }
     });
 </script>
@@ -164,7 +202,7 @@
 
 <script type="text/html" data-help-name="subscribe-state">
     <h3>About</h3>
-    <p>A node that subscribes to global state updates, including nested property changes and wildcard patterns.</p>
+    <p>A node that subscribes to global state updates, including nested property changes, wildcard patterns, and regex patterns.</p>
     
     <h3>Details</h3>
     <p>This node monitors changes to one or more specified properties in Node-RED's global context. When any of the 
@@ -177,12 +215,30 @@
     to nested properties within objects. For example, if you subscribe to <code>device</code> and a nested property 
     like <code>device.status.online</code> changes, you'll be notified of the change.</p>
     
-    <p><b>Wildcard Support:</b> You can use wildcards (*) in property patterns to subscribe to multiple properties at once:</p>
+    <p><b>Property Types:</b> You can specify how to match properties using different pattern types:</p>
+    <ul>
+        <li><b>String/Wildcard:</b> Use exact string matching or wildcards (*). 
+            <ul>
+                <li>Simple strings like <code>device.temperature</code> match that exact property and any nested properties</li>
+                <li>Patterns with <code>*</code> like <code>devices.*.temperature</code> match any property where * can be any value</li>
+            </ul>
+        </li>
+        <li><b>Regex:</b> Use regular expressions for more complex pattern matching</li>
+    </ul>
+    
+    <h3>Pattern Examples</h3>
+    <p><b>Wildcard Examples:</b></p>
     <ul>
         <li><code>devices.*</code> - Subscribe to all direct children of the devices object</li>
         <li><code>devices.*.status</code> - Subscribe to the status property of any child under devices</li>
         <li><code>*.temperature</code> - Subscribe to any temperature property at the root level</li>
-        <li><code>sensors.*.*</code> - Subscribe to all grandchildren of the sensors object</li>
+    </ul>
+    
+    <p><b>Regex Examples:</b></p>
+    <ul>
+        <li><code>^devices\.(\w+)\.temperature$</code> - Match only temperature properties of devices</li>
+        <li><code>^sensors\.[^\.]+\.value$</code> - Match the value property of any sensor</li>
+        <li><code>^(temp|humidity)_\d+$</code> - Match properties starting with "temp_" or "humidity_" followed by numbers</li>
     </ul>
     
     <h3>Outputs</h3>
@@ -194,10 +250,11 @@
         <li><code>msg.payload</code> - Same as <code>msg.value</code></li>
     </ul>
     
-    <p><b>For wildcard matches, additional fields are included:</b></p>
+    <p><b>For wildcard and regex matches, additional fields are included:</b></p>
     <ul>
-        <li><code>msg.subscribedPattern</code> - The original wildcard pattern used</li>
-        <li><code>msg.isWildcardMatch</code> - Set to <code>true</code> for wildcard matches</li>
+        <li><code>msg.subscribedPattern</code> - The original pattern used</li>
+        <li><code>msg.isPatternMatch</code> - Set to <code>true</code> for pattern matches</li>
+        <li><code>msg.patternType</code> - The type of pattern ("wildcard" or "regex")</li>
     </ul>
     
     <p><b>For nested property changes, additional fields are included:</b></p>
@@ -206,43 +263,4 @@
         <li><code>msg.changedPath</code> - The full path of the property that changed (e.g., <code>device.status.online</code>)</li>
         <li><code>msg.changedProperty</code> - The path relative to the subscribed property (e.g., <code>status.online</code>)</li>
     </ul>
-    
-    <h3>Example</h3>
-    <p>If you subscribe to <code>user</code> and monitor an object containing user information:</p>
-    <pre>{
-  name: "John",
-  preferences: {
-    theme: "dark",
-    notifications: true
-  }
-}</pre>
-    <p>When <code>user.preferences.theme</code> changes from "dark" to "light", you'll receive a message with:</p>
-    <pre>msg = {
-  property: "user",
-  previousValue: { name: "John", preferences: { theme: "dark", notifications: true } },
-  value: { name: "John", preferences: { theme: "light", notifications: true } },
-  payload: { name: "John", preferences: { theme: "light", notifications: true } },
-  deepChange: true,
-  changedPath: "user.preferences.theme",
-  changedProperty: "preferences.theme"
-}</pre>
-
-    <h3>Wildcard Example</h3>
-    <p>If you subscribe to <code>devices.*.temperature</code> and have multiple devices:</p>
-    <pre>{
-  devices: {
-    livingRoom: { temperature: 22, humidity: 45 },
-    bedroom: { temperature: 20, humidity: 50 },
-    kitchen: { temperature: 23, humidity: 48 }
-  }
-}</pre>
-    <p>When <code>devices.bedroom.temperature</code> changes from 20 to 21, you'll receive a message with:</p>
-    <pre>msg = {
-  property: "devices.bedroom.temperature",
-  subscribedPattern: "devices.*.temperature",
-  previousValue: 20,
-  value: 21,
-  payload: 21,
-  isWildcardMatch: true
-}</pre>
 </script>
