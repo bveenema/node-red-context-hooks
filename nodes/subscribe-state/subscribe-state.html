@@ -167,7 +167,7 @@
             
             // Collect all property values and types
             $(".subscribe-property-row").each(function() {
-                var propInput = $(this).find("input[type='text']");
+                var propInput = $(this).find("input");
                 var value = propInput.typedInput('value').trim();
                 var type = propInput.typedInput('type');
                 

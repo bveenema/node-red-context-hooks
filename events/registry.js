@@ -10,9 +10,6 @@ emitter.setMaxListeners(100); // Increase max listeners
 // Registry to store subscriptions
 const subscriptions = new Map();
 
-// Track change operations - each distinct property change gets a unique change token
-let currentChangeToken = 0;
-
 // Store compiled RegExp objects for regex patterns
 const regexCache = new Map();
 
@@ -143,14 +140,6 @@ function matchesWildcardPattern(property, pattern) {
 }
 
 /**
- * Get the next change token for tracking operation batches
- * @returns {number} - A unique token for this change operation
- */
-function getNextChangeToken() {
-    return ++currentChangeToken;
-}
-
-/**
  * Publish a property change event and notify relevant subscribers
  * @param {string} property - The property that changed
  * @param {any} data - The change data object
@@ -221,5 +210,5 @@ module.exports = {
     getPatterns,
     clearSubscriptions,
     emitter,  // Export the emitter for backward compatibility
-    getNextChangeToken
+    // getNextChangeToken
 }; 

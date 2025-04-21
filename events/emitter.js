@@ -14,5 +14,5 @@ module.exports = {
     publish: registry.publish,
     getPatterns: registry.getPatterns,
     clearSubscriptions: registry.clearSubscriptions,
-    getNextChangeToken: registry.getNextChangeToken
+    // getNextChangeToken: registry.getNextChangeToken
 };

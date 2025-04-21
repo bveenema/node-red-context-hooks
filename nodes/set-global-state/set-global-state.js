@@ -1,5 +1,5 @@
-const { isEqual, cloneDeep, merge } = require('lodash');
-const { publish, getNextChangeToken } = require('../../events/emitter');
+const { isEqual, uniq, get, cloneDeep, merge } = require('lodash');
+const { getNextChangeToken } = require('../../events/track-changes');
 const PubSub = require('pubsub-js');
 
 module.exports = function(RED) {
@@ -10,109 +10,143 @@ module.exports = function(RED) {
         let { property } = config;
         const global = node.context().global;
 
-        // Function to publish events for property and all parent paths
-        const publishPropertyAndParents = (propPath, previousValue, value) => {
-            node.warn("[publish] Publish property and parents:")
-            node.warn(propPath);
-            node.warn(previousValue);
-            node.warn(value);
-            // Generate a single change token for this entire operation
-            const changeToken = getNextChangeToken();
-            
-            // For top-level property updates, just publish for the exact property
-            if (!propPath.includes('.')) {
-                node.warn(`[publish - ${propPath}] top-level property update`)
-                publish(propPath, {
-                    previousValue,
-                    value,
-                    changedPath: propPath,
-                    changedProperty: propPath,
-                    deepChange: false
-                }, { changeToken });
-                return;
-            }
-
-            // For nested properties, we need to handle parent paths carefully
-            const parts = propPath.split('.');
-            for (let i = 1; i < parts.length; i++) {
-                // Get the parent path at this level
-                const parentPath = parts.slice(0, i).join('.');
-                node.warn(`[publish - ${propPath}] Parent path: ${parentPath}`);
-                
-                // Get the parent objects
-                const parentPreviousValue = global.get(parentPath);
-                const parentCurrentValue = global.get(parentPath);
-                
-                // Publish the event for this intermediate parent
-                publish(parentPath, {
-                    previousValue: parentPreviousValue,
-                    value: parentCurrentValue,
-                    changedPath: propPath,
-                    changedProperty: propPath.substring(parentPath.length + 1),
-                    deepChange: true
-                }, { 
-                    changeToken,
-                    isPropagated: true
-                });
+        // Get all nested keys from an object with their full paths
+        const getAllNestedKeys = (obj, prefix = '') => {
+            if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+                return [];
             }
             
+            let keys = [];
+            for (const key of Object.keys(obj)) {
+                const currentPath = prefix ? `${prefix}.${key}` : key;
+                // Add the current key path
+                keys.push(currentPath);
+                
+                // If value is an object, recurse and get nested keys
+                if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                    keys = keys.concat(getAllNestedKeys(obj[key], currentPath));
+                }
+            }
+            
+            return keys;
+        }
         
-            // First, publish the event for the exact property that changed
-            // // This is the primary change
-            // publish(propPath, {
-            //     previousValue,
-            //     value,
-            // }, { 
-            //     changeToken,
-            //     isPropagated: false // This is the primary property that changed
-            // });
-            
-            // // Set up data for the parent update
-            // const rootPath = parts[0];
-            // const rootPrevious = global.get(rootPath);
-            
-            // // Get a clone of the current full object after the update
-            // const rootCurrent = global.get(rootPath);
-            
-            // // Only publish one event for the root object with details about the nested change
-            // // This is a propagated notification
-            // publish(rootPath, {
-            //     previousValue: rootPrevious,
-            //     value: rootCurrent,
-            //     changedPath: propPath,
-            //     changedProperty: propPath.substring(rootPath.length + 1),
-            //     deepChange: true
-            // }, { 
-            //     changeToken,
-            //     isPropagated: true // This is a propagated notification
-            // });
-            
-            // For complex hierarchies where we want intermediate path notifications,
-            // uncomment and modify this code:
-            /*
-            // For each intermediate level in the hierarchy, emit an event
-            for (let i = 2; i < parts.length; i++) {
-                // Get the parent path at this level
-                const parentPath = parts.slice(0, i).join('.');
-                
-                // Get the parent objects
-                const parentPreviousValue = global.get(parentPath);
-                const parentCurrentValue = global.get(parentPath);
-                
-                // Publish the event for this intermediate parent
-                publish(parentPath, {
-                    previousValue: parentPreviousValue,
-                    value: parentCurrentValue,
-                    changedPath: propPath,
-                    changedProperty: propPath.substring(parentPath.length + 1),
-                    deepChange: true
-                }, { 
-                    changeToken,
-                    isPropagated: true
-                });
+        const getDeepUpdatedKeys = (oldData, newData, prefix = '') => {
+            // if newData no supplied, throw an error
+            if (!newData) {
+                node.error(`[getDeepUpdatedKeys] newData is not supplied`)
+                return [];
             }
-            */
-        };
+            
+            // If this is a new key, oldData will be of form {keyName: undefined}
+            const key = Object.keys(oldData)[0];
+            if (oldData && oldData[key] === undefined) {
+                return getAllNestedKeys(newData, prefix);
+            }
+        
+            // For regular comparison
+            const data = uniq([...Object.keys(oldData || {}), ...Object.keys(newData || {})]);
+            const keys = [];
+            
+            for (const key of data) {
+                const oldValue = oldData?.[key];
+                const newValue = newData?.[key];
+                const currentPath = prefix ? `${prefix}.${key}` : key;
+                
+                // If both values are objects (and not null), check if the object itself has changed
+                if (
+                    oldValue && 
+                    newValue && 
+                    typeof oldValue === 'object' && 
+                    typeof newValue === 'object' &&
+                    !Array.isArray(oldValue) &&
+                    !Array.isArray(newValue)
+                ) {
+                    // First check if the object itself has changed
+                    if (!isEqual(oldValue, newValue)) {
+                        keys.push(currentPath);
+                    }
+                    // Then check nested properties
+                    const nestedChanges = getDeepUpdatedKeys(oldValue, newValue, currentPath);
+                    keys.push(...nestedChanges);
+                }
+                // If values are different, add the current path
+                else if (!isEqual(oldValue, newValue)) {
+                    keys.push(currentPath);
+                }
+            }
+            
+            return keys;
+        }
+
+        const pathToObject = (path, value) => {
+            // Split the path into parts
+            const parts = path.split('.');
+            
+            // Start with an empty object
+            const result = {};
+            
+            // Keep track of the current object we're building
+            let current = result;
+            
+            // Process all parts except the last one
+            for (let i = 0; i < parts.length - 1; i++) {
+                const part = parts[i];
+                current[part] = {};
+                current = current[part];
+            }
+            
+            // Assign the value to the last part
+            current[parts[parts.length - 1]] = value;
+
+            return result;
+        }
+
+        const handleAppend = (previousValue, newValue) => {
+            // Apply different append behaviors based on data type
+            if (Array.isArray(previousValue)) {
+                // For arrays, add items to the end
+                if (Array.isArray(newValue)) {
+                    return [...previousValue, ...newValue];
+                } else {
+                    // Add single item to array
+                    return [...previousValue, newValue];
+                }
+            } else if (Buffer.isBuffer(previousValue)) {
+                // For buffers, concatenate them
+                if (Buffer.isBuffer(newValue)) {
+                    return Buffer.concat([previousValue, newValue]);
+                } else if (typeof newValue === 'string') {
+                    // If newValue is a string, convert to buffer and concatenate
+                    return Buffer.concat([previousValue, Buffer.from(newValue)]);
+                } else {
+                    throw new Error(`Cannot append ${typeof newValue} to Buffer`);
+                }
+            } else if (typeof previousValue === 'object' && previousValue !== null && typeof newValue === 'object' && newValue !== null) {
+                // For objects, merge properties
+                return merge({}, previousValue, newValue);
+            } else if (typeof previousValue === 'string') {
+                // For strings, concatenate
+                if (typeof newValue === 'string') {
+                    return previousValue + newValue;
+                } else if (Buffer.isBuffer(newValue)) {
+                    // If newValue is a buffer, convert to string and concatenate
+                    return previousValue + newValue.toString();
+                } else {
+                    throw new Error(`Cannot append ${typeof newValue} to string`);
+                }
+            } else if (typeof previousValue === 'number') {
+                // For numbers, add
+                if (typeof newValue === 'number') {
+                    return previousValue + newValue;
+                } else {
+                    throw new Error(`Cannot append ${typeof newValue} to number`);
+                }
+            } else {
+                // Types don't match and can't be appended
+                throw new Error(`Cannot append to ${typeof previousValue}`);
+            }
+        }
 
         node.on('input', function(msg, send, done) {
             if (msg.property) {
@@ -123,94 +157,66 @@ module.exports = function(RED) {
             const action = msg.action || config.action || 'replace';
 
             try {
-                const previousValue = global.get(property);
+                // Process the new value
+                let newValue;
+                eval(`newValue = function() {${config.func}}();`);
 
-                // Process the user function to get the final value
-                let value;
-                eval(`value = function() {${config.func}}();`);
-
-                node.status({});
-
-                if (value === undefined) {
-                    node.error(`[set-global-state - ${property}] Value is undefined`, msg);
-                    node.status({ fill: 'red', shape: 'ring', text: 'error' });
+                if (newValue === undefined) {
+                    node.error(`[${property}] New value is undefined`, msg);
                     if (done) done();
                     return;
                 }
-
-                let finalValue = value;
                 
-                // Handle append action if needed
+                // get the previous value
+                const previousValue = global.get(property);
+
+                // handle append
                 if (action === 'append' && previousValue !== undefined) {
-                    // Apply different append behaviors based on data type
-                    if (Array.isArray(previousValue)) {
-                        // For arrays, add items to the end
-                        if (Array.isArray(value)) {
-                            finalValue = [...previousValue, ...value];
-                        } else {
-                            // Add single item to array
-                            finalValue = [...previousValue, value];
-                        }
-                    } else if (Buffer.isBuffer(previousValue)) {
-                        // For buffers, concatenate them
-                        if (Buffer.isBuffer(value)) {
-                            finalValue = Buffer.concat([previousValue, value]);
-                        } else if (typeof value === 'string') {
-                            // If value is a string, convert to buffer and concatenate
-                            finalValue = Buffer.concat([previousValue, Buffer.from(value)]);
-                        } else {
-                            node.error(`Cannot append ${typeof value} to Buffer`, msg);
-                            node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
-                            if (done) done();
-                            return;
-                        }
-                    } else if (typeof previousValue === 'object' && previousValue !== null && typeof value === 'object' && value !== null) {
-                        // For objects, merge properties
-                        finalValue = merge({}, previousValue, value);
-                    } else if (typeof previousValue === 'string') {
-                        // For strings, concatenate
-                        if (typeof value === 'string') {
-                            finalValue = previousValue + value;
-                        } else if (Buffer.isBuffer(value)) {
-                            // If value is a buffer, convert to string and concatenate
-                            finalValue = previousValue + value.toString();
-                        } else {
-                            node.error(`Cannot append ${typeof value} to string`, msg);
-                            node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
-                            if (done) done();
-                            return;
-                        }
-                    } else if (typeof previousValue === 'number') {
-                        // For numbers, add
-                        if (typeof value === 'number') {
-                            finalValue = previousValue + value;
-                        } else {
-                            node.error(`Cannot append ${typeof value} to number`, msg);
-                            node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
-                            if (done) done();
-                            return;
-                        }
-                    } else {
-                        // Types don't match and can't be appended
-                        node.error(`Cannot append to ${typeof previousValue}`, msg);
+                    try {
+                        newValue = handleAppend(previousValue, newValue);
+                    } catch (error) {
+                        node.error(`[${property}] Error appending: ${error}`, msg);
                         node.status({ fill: 'red', shape: 'ring', text: 'type mismatch' });
                         if (done) done();
                         return;
                     }
                 }
-
-                if (isEqual(previousValue, finalValue)) {
+                
+                // if the previous value is equal to the new value, then don't do anything
+                if (isEqual(previousValue, newValue)) {
                     return;
                 }
 
-                // Set the value in global context
-                global.set(property, finalValue);
+                const prevObj = pathToObject(property, previousValue);
+                const topLevelKey = Object.keys(prevObj)[0];
+                const prevFullObj = { [topLevelKey]: cloneDeep(global.get(topLevelKey)) };
 
-                // Publish events for this property and all parent paths
-                publishPropertyAndParents(property, previousValue, finalValue);
+                // set the new value
+                global.set(property, newValue);
 
-                // This call is wrapped in a check that 'done' exists
-                // so the node will work in earlier versions of Node-RED (<1.0)
+                // Create objects for changed keys calculation
+                const finalObj = pathToObject(property, newValue);
+                const finalFullObj = { [topLevelKey]: global.get(topLevelKey) };
+
+                // Get all the changed keys
+                const changedKeys = getDeepUpdatedKeys(prevObj, finalObj);
+
+                // Generate a single change token for this entire operation
+                const changeToken = getNextChangeToken();
+
+                // publish all the changed keys
+                changedKeys.forEach(key => {
+                    if(PubSub.countSubscriptions(key) > 0) {
+                        PubSub.publish(key, {
+                            value: get(finalFullObj, key),
+                            previousValue: get(prevFullObj, key),
+                            changedPaths: changedKeys,
+                            pubKey: key,
+                            changeToken: changeToken
+                        });
+                    }
+                });
+
                 if (done) {
                     done();
                 }
@@ -222,8 +228,8 @@ module.exports = function(RED) {
                     // Node-RED 0.x compatible
                     node.error(error, msg);
                 }
-                console.error(error);
-                node.status({ fill: 'red', shape: 'ring', text: 'error' });
+                node.error(error);
+                node.status({ fill: 'red', shape: 'ring', text: 'error processing publish' });
             }
         });
     }

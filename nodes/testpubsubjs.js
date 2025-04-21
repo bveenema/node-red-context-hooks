@@ -1,4 +1,4 @@
-const { isEqual, uniq } = require('lodash');
+const { isEqual, uniq, get } = require('lodash');
 
 const getUpdatedKeys = (oldData, newData) => {
     const data = uniq([...Object.keys(oldData), ...Object.keys(newData)]);
@@ -244,3 +244,6 @@ console.log('All nested keys:', getDeepUpdatedKeys(null, smallObj));
 
 
 console.log("int test", getDeepUpdatedKeys(0, 1));
+
+console.log("Subkey Test");
+console.log(get(deepNewObj, "user.profile.name.first"));
