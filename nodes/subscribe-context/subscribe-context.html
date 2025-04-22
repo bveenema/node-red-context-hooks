@@ -64,7 +64,7 @@
                 }).appendTo(container);
                 
                 // Add remove button for all except the first property
-                if (index > 0) {
+                if (index > 0 || node.properties.length > 1) {
                     var removeButton = $('<a/>', {
                         href: "#",
                         class: "editor-button editor-button-small",
@@ -75,7 +75,7 @@
                     removeButton.click(function(e) {
                         e.preventDefault();
                         $(this).closest('.subscribe-property-row').remove();
-                        // Renumber the remaining rows
+                        // Renumber the remaining rows and update button visibility
                         updatePropertyLabels();
                         return false;
                     });
@@ -121,9 +121,13 @@
                 var rows = $("#subscribe-properties-container").children(".subscribe-property-row");
                 if (rows.length === 1) {
                     $(rows[0]).find("label").html('<i class="fa fa-tag"></i> Property');
+                    // Hide remove button on first property when only one exists
+                    $(rows[0]).find(".editor-button-small").hide();
                 } else {
                     rows.each(function(i) {
                         $(this).find("label").html('<i class="fa fa-tag"></i> Property ' + (i + 1));
+                        // Show all remove buttons when multiple properties exist
+                        $(this).find(".editor-button-small").show();
                     });
                 }
             }
