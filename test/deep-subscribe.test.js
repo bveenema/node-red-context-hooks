@@ -1,6 +1,6 @@
 const helper = require('node-red-node-test-helper');
-const subscribeStateNode = require('../nodes/subscribe-state/subscribe-state.js');
-const setGlobalStateNode = require('../nodes/set-global-state/set-global-state.js');
+const subscribeStateNode = require('../nodes/subscribe-context/subscribe-context.js');
+const setGlobalStateNode = require('../nodes/publish-context/publish-context.js');
 
 helper.init(require.resolve('node-red'));
 
@@ -15,12 +15,12 @@ describe('Deep Subscribe Functionality', function () {
     });
 
     it('should receive notifications when nested properties change', function (done) {
-        // Create a test flow with a subscribe-state node and two set-global-state nodes
+        // Create a test flow with a subscribe-context node and two publish-context nodes
         const flow = [
             // Subscribe node watching the parent property
             { 
                 id: 'subscribe1', 
-                type: 'subscribe-state', 
+                type: 'subscribe-context', 
                 name: 'subscribe parent',
                 property: 'testObj',
                 wires: [['helperNode1']]
@@ -33,7 +33,7 @@ describe('Deep Subscribe Functionality', function () {
             // Set node for setting the initial object
             { 
                 id: 'setInitial', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set initial',
                 property: 'testObj',
                 func: 'return { level1: { level2: "initial value" } };'
@@ -41,7 +41,7 @@ describe('Deep Subscribe Functionality', function () {
             // Set node for updating a nested property
             { 
                 id: 'setNested', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set nested',
                 property: 'testObj.level1.level2',
                 func: 'return "updated value";'
@@ -100,7 +100,7 @@ describe('Deep Subscribe Functionality', function () {
         const flow = [
             { 
                 id: 'subscribe2', 
-                type: 'subscribe-state', 
+                type: 'subscribe-context', 
                 name: 'subscribe parent',
                 property: 'testObj2',
                 wires: [['helperNode2']]
@@ -111,14 +111,14 @@ describe('Deep Subscribe Functionality', function () {
             },
             { 
                 id: 'setInitial2', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set initial',
                 property: 'testObj2',
                 func: 'return { a: 1, b: { c: 2, d: 3 } };'
             },
             { 
                 id: 'setNested2', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set nested',
                 property: 'testObj2.b.c',
                 func: 'return 42;'

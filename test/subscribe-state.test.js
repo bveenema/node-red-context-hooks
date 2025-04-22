@@ -1,9 +1,9 @@
 const helper = require('node-red-node-test-helper');
-const subscribeStateNode = require('../nodes/subscribe-state/subscribe-state.js');
+const subscribeStateNode = require('../nodes/subscribe-context/subscribe-context.js');
 
 helper.init(require.resolve('node-red'));
 
-describe('subscribe-state Node', function () {
+describe('subscribe-context Node', function () {
     beforeEach(function (done) {
         helper.startServer(done);
     });
@@ -14,7 +14,7 @@ describe('subscribe-state Node', function () {
     });
 
     it('should be loaded', function (done) {
-        const flow = [{ id: 'n1', type: 'subscribe-state', name: 'test name' }];
+        const flow = [{ id: 'n1', type: 'subscribe-context', name: 'test name' }];
         helper.load(subscribeStateNode, flow, function () {
             const node = helper.getNode('n1');
 

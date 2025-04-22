@@ -17,16 +17,26 @@
             "9e41a70db316fd15",
             "94e3f3c2f59dda3e",
             "cc2e186664fc2b18",
-            "9ebfb1bde94ec945",
             "1e577d8c16653f82",
             "11f9437613bdc5d2",
             "c0e7b856b3da8c46",
-            "9414b4014393d40e"
+            "9be7f01092be32a6",
+            "f531083eb698f6d9",
+            "9d01b4207851a743",
+            "695910b1ec25a084",
+            "f1f422fec3675133",
+            "bd08573f46f8f2f1",
+            "d530481e2072bdd7",
+            "786e89e719c3da47",
+            "30fa7cf5e5874514",
+            "55e82dfc6c357d42",
+            "ab259ad477a665bc",
+            "dba8bb9906976079"
         ],
         "x": 54,
-        "y": 419,
+        "y": 399,
         "w": 432,
-        "h": 242
+        "h": 442
     },
     {
         "id": "2d6535ba5a7f1e55",
@@ -36,37 +46,40 @@
         "name": "Deep Subscribe Flow",
         "info": "",
         "x": 180,
-        "y": 460,
+        "y": 440,
         "wires": []
     },
     {
         "id": "9e41a70db316fd15",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "46a9ebb9267f8f63",
-        "name": "subscribe state",
+        "name": "[SUB] test2",
         "properties": [
             "test2"
         ],
-        "x": 160,
-        "y": 580,
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 170,
+        "y": 680,
         "wires": [
             [
-                "9ebfb1bde94ec945"
+                "9be7f01092be32a6"
             ]
         ]
     },
     {
         "id": "94e3f3c2f59dda3e",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "46a9ebb9267f8f63",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test2",
         "action": "replace",
         "func": "return msg.payload;",
         "x": 380,
-        "y": 500,
+        "y": 480,
         "wires": []
     },
     {
@@ -85,33 +98,15 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"string\":\"Hello World\",\"float\":3.14,\"bool\":false,\"int\":41}",
+        "payload": "{\"string\":\"Hello World\",\"float\":3.14,\"bool\":false,\"int\":41,\"obj\":{\"test\":5,\"test2\":10}}",
         "payloadType": "json",
         "x": 180,
-        "y": 500,
+        "y": 480,
         "wires": [
             [
                 "94e3f3c2f59dda3e"
             ]
         ]
-    },
-    {
-        "id": "9ebfb1bde94ec945",
-        "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "g": "46a9ebb9267f8f63",
-        "name": "debug 2",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 580,
-        "wires": []
     },
     {
         "id": "1e577d8c16653f82",
@@ -136,7 +131,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 180,
-        "y": 540,
+        "y": 520,
         "wires": [
             [
                 "11f9437613bdc5d2"
@@ -145,40 +140,43 @@
     },
     {
         "id": "11f9437613bdc5d2",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "46a9ebb9267f8f63",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test2.int",
         "action": "replace",
         "func": "return msg.payload;",
         "x": 380,
-        "y": 540,
+        "y": 520,
         "wires": []
     },
     {
         "id": "c0e7b856b3da8c46",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "46a9ebb9267f8f63",
-        "name": "subscribe state",
+        "name": "[SUB] test2.int",
         "properties": [
             "test2.int"
         ],
-        "x": 160,
-        "y": 620,
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 170,
+        "y": 720,
         "wires": [
             [
-                "9414b4014393d40e"
+                "f531083eb698f6d9"
             ]
         ]
     },
     {
-        "id": "9414b4014393d40e",
+        "id": "9be7f01092be32a6",
         "type": "debug",
         "z": "f6f2187d.f17ca8",
         "g": "46a9ebb9267f8f63",
-        "name": "debug 7",
+        "name": "debug 2",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -188,7 +186,222 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 360,
-        "y": 620,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "f531083eb698f6d9",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "9d01b4207851a743",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "Set Object 2",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"string\":\"Hello World\",\"float\":2.89,\"bool\":false,\"int\":45,\"obj\":{\"test\":5,\"test2\":10}}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 560,
+        "wires": [
+            [
+                "695910b1ec25a084"
+            ]
+        ]
+    },
+    {
+        "id": "695910b1ec25a084",
+        "type": "publish-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "publish context",
+        "property": "test2",
+        "action": "replace",
+        "func": "return msg.payload;",
+        "x": 380,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "f1f422fec3675133",
+        "type": "publish-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "publish context",
+        "property": "test2.obj.test",
+        "action": "replace",
+        "func": "return msg.payload;",
+        "x": 380,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "bd08573f46f8f2f1",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "Update Obj",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 600,
+        "wires": [
+            [
+                "f1f422fec3675133"
+            ]
+        ]
+    },
+    {
+        "id": "d530481e2072bdd7",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "786e89e719c3da47",
+        "type": "subscribe-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "test2.obj",
+        "properties": [
+            "test2.obj"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 160,
+        "y": 760,
+        "wires": [
+            [
+                "d530481e2072bdd7"
+            ]
+        ]
+    },
+    {
+        "id": "30fa7cf5e5874514",
+        "type": "subscribe-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "test2.obj.test",
+        "properties": [
+            "test2.obj.test"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 170,
+        "y": 800,
+        "wires": [
+            [
+                "55e82dfc6c357d42"
+            ]
+        ]
+    },
+    {
+        "id": "55e82dfc6c357d42",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "ab259ad477a665bc",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "Set Object 3",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"test\":10,\"test2\":5}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 640,
+        "wires": [
+            [
+                "dba8bb9906976079"
+            ]
+        ]
+    },
+    {
+        "id": "dba8bb9906976079",
+        "type": "publish-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "46a9ebb9267f8f63",
+        "name": "publish context",
+        "property": "test2.obj",
+        "action": "replace",
+        "func": "return msg.payload;",
+        "x": 380,
+        "y": 640,
         "wires": []
     }
 ]

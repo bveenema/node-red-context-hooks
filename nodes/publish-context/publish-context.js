@@ -222,10 +222,8 @@ module.exports = function(RED) {
                 }
             } catch (error) {
                 if (done) {
-                    // Node-RED 1.0 compatible
                     done(error);
                 } else {
-                    // Node-RED 0.x compatible
                     node.error(error, msg);
                 }
                 node.error(error);
@@ -234,5 +232,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType('set-global-state', SetGlobalState);
+    RED.nodes.registerType('publish-context', SetGlobalState);
 }

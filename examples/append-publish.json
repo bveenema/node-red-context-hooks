@@ -17,7 +17,6 @@
             "bd7e624c1effa435",
             "e6486a94f211ad9f",
             "47ed28a6b55784b4",
-            "f20820307821e482",
             "90b633177ca41c33",
             "9187ea7a6703aa33",
             "3e2bee7b69fe9f61",
@@ -25,12 +24,15 @@
             "9413f52193f9be10",
             "c7ec046b3fad5790",
             "9130e926c08863a6",
-            "191dad0439b05f70"
+            "191dad0439b05f70",
+            "1d5f94cfa148adc2",
+            "0b13445cbfd0b0cd",
+            "d5c0da95854e8a63"
         ],
         "x": 754,
         "y": 179,
         "w": 432,
-        "h": 322
+        "h": 362
     },
     {
         "id": "df707db2e488b2bf",
@@ -45,32 +47,31 @@
     },
     {
         "id": "bd7e624c1effa435",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "subscribe state",
+        "name": "subscribe context",
         "properties": [
-            "test5",
-            "test6",
-            "test7",
-            "test8",
-            "test9"
+            "test5"
+        ],
+        "propertyTypes": [
+            "str"
         ],
         "x": 860,
         "y": 460,
         "wires": [
             [
-                "f20820307821e482"
+                "1d5f94cfa148adc2"
             ]
         ]
     },
     {
         "id": "e6486a94f211ad9f",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "set global state",
-        "property": "test5",
+        "name": "publish context",
+        "property": "test5.object",
         "action": "append",
         "func": "let object = {}\nobject[msg.timestamp] = msg.payload\n\nreturn object;",
         "x": 1080,
@@ -109,24 +110,6 @@
         ]
     },
     {
-        "id": "f20820307821e482",
-        "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "g": "1ca17a844f5dc7a3",
-        "name": "debug 4",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1060,
-        "y": 460,
-        "wires": []
-    },
-    {
         "id": "90b633177ca41c33",
         "type": "inject",
         "z": "f6f2187d.f17ca8",
@@ -159,11 +142,11 @@
     },
     {
         "id": "9187ea7a6703aa33",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "set global state",
-        "property": "test6",
+        "name": "publish context",
+        "property": "test5.array",
         "action": "append",
         "func": "return msg.payload;",
         "x": 1080,
@@ -198,11 +181,11 @@
     },
     {
         "id": "9d6aeea4c36caa4c",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "set global state",
-        "property": "test7",
+        "name": "publish context",
+        "property": "test5.string",
         "action": "append",
         "func": "return msg.payload;",
         "x": 1080,
@@ -237,11 +220,11 @@
     },
     {
         "id": "c7ec046b3fad5790",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "set global state",
-        "property": "test8",
+        "name": "publish context",
+        "property": "test5.number",
         "action": "append",
         "func": "return msg.payload;",
         "x": 1080,
@@ -276,15 +259,79 @@
     },
     {
         "id": "191dad0439b05f70",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "set global state",
-        "property": "test9",
+        "name": "publish context",
+        "property": "test5.buffer",
         "action": "append",
         "func": "return msg.payload;",
         "x": 1080,
         "y": 420,
+        "wires": []
+    },
+    {
+        "id": "1d5f94cfa148adc2",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "0b13445cbfd0b0cd",
+        "type": "subscribe-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "subscribe context",
+        "properties": [
+            "test5.object",
+            "test5.array",
+            "test5.string",
+            "test5.number",
+            "test5.buffer"
+        ],
+        "propertyTypes": [
+            "str",
+            "str",
+            "str",
+            "str",
+            "str"
+        ],
+        "x": 860,
+        "y": 500,
+        "wires": [
+            [
+                "d5c0da95854e8a63"
+            ]
+        ]
+    },
+    {
+        "id": "d5c0da95854e8a63",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "1ca17a844f5dc7a3",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 500,
         "wires": []
     }
 ]

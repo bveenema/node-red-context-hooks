@@ -17,14 +17,14 @@
             "9d1f5f5e415dbe0d",
             "e1f4b6a8e1385a7d",
             "6ee2391fec440ab1",
-            "8537c442013bc684",
             "6e87649a23bd4467",
             "9574f2ac42aeae5a",
             "3fdc3f89e4a0f1d9",
-            "597b7f6ad7fc247d"
+            "597b7f6ad7fc247d",
+            "784f900e8c4cc756"
         ],
         "x": 54,
-        "y": 659,
+        "y": 899,
         "w": 432,
         "h": 242
     },
@@ -36,37 +36,42 @@
         "name": "Mult-Subscribe",
         "info": "",
         "x": 160,
-        "y": 700,
+        "y": 940,
         "wires": []
     },
     {
         "id": "9d1f5f5e415dbe0d",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "00feee258822b645",
-        "name": "subscribe state",
+        "name": "subscribe context",
         "properties": [
             "test3",
             "test4"
         ],
+        "propertyTypes": [
+            "str",
+            "str"
+        ],
         "x": 160,
-        "y": 860,
+        "y": 1100,
         "wires": [
             [
-                "8537c442013bc684"
+                "784f900e8c4cc756"
             ]
         ]
     },
     {
         "id": "e1f4b6a8e1385a7d",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "00feee258822b645",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test3",
+        "action": "replace",
         "func": "return msg.payload;",
         "x": 380,
-        "y": 740,
+        "y": 980,
         "wires": []
     },
     {
@@ -88,30 +93,12 @@
         "payload": "{\"string\":\"Hello World\",\"float\":3.14,\"bool\":false,\"int\":41}",
         "payloadType": "json",
         "x": 180,
-        "y": 740,
+        "y": 980,
         "wires": [
             [
                 "e1f4b6a8e1385a7d"
             ]
         ]
-    },
-    {
-        "id": "8537c442013bc684",
-        "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "g": "00feee258822b645",
-        "name": "debug 3",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 360,
-        "y": 860,
-        "wires": []
     },
     {
         "id": "6e87649a23bd4467",
@@ -133,10 +120,10 @@
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "{\"string\":\"Hey uou!\",\"float\":1.234,\"bool\":true,\"int\":7}",
+        "payload": "{\"string\":\"Hey you!\",\"float\":1.234,\"bool\":true,\"int\":7}",
         "payloadType": "json",
         "x": 180,
-        "y": 780,
+        "y": 1020,
         "wires": [
             [
                 "9574f2ac42aeae5a"
@@ -145,14 +132,15 @@
     },
     {
         "id": "9574f2ac42aeae5a",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "00feee258822b645",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test4",
+        "action": "replace",
         "func": "return msg.payload;",
         "x": 380,
-        "y": 780,
+        "y": 1020,
         "wires": []
     },
     {
@@ -178,7 +166,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 180,
-        "y": 820,
+        "y": 1060,
         "wires": [
             [
                 "597b7f6ad7fc247d"
@@ -187,14 +175,33 @@
     },
     {
         "id": "597b7f6ad7fc247d",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "00feee258822b645",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test4.int",
+        "action": "replace",
         "func": "return msg.payload;",
         "x": 380,
-        "y": 820,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "784f900e8c4cc756",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "00feee258822b645",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 1100,
         "wires": []
     }
 ]

@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('set-global-state', {
+    RED.nodes.registerType('publish-context', {
         category: 'state',
         color: '#c0deed',
         align: 'right',
@@ -28,7 +28,7 @@
                 return `${this.property} = ...`;
             }
 
-            return 'set global state';
+            return 'publish context';
         },
         oneditprepare: function() {
             this.editor = RED.editor.createEditor({
@@ -61,7 +61,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="set-global-state">
+<script type="text/html" data-template-name="publish-context">
     <div class="form-row" style="display: flex;">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="name">
@@ -86,13 +86,13 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="set-global-state">
+<script type="text/html" data-help-name="publish-context">
     <h3>About</h3>
     <p>A node that sets values in the global context and notifies subscribers of changes.</p>
     
     <h3>Details</h3>
     <p>This node sets a specified property in Node-RED's global context. When the property is updated, an event is emitted 
-    that can be detected by <code>subscribe-state</code> and <code>state-hook</code> nodes.</p>
+    that can be detected by <code>subscribe-context</code> and <code>state-hook</code> nodes.</p>
     
     <p><b>Deep Property Updates:</b> The node supports setting deeply nested properties using dot notation. For example, 
     you can update <code>device.status.online</code> directly without having to modify the entire <code>device</code> object.</p>

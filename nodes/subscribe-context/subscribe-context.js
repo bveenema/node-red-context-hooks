@@ -1,4 +1,3 @@
-const { subscribe } = require('../../events/emitter');
 const PubSub = require('pubsub-js');
 
 module.exports = function(RED) {
@@ -56,17 +55,8 @@ module.exports = function(RED) {
 
                 // If we've already processed this token for this subscription node, skip
                 if (data.changeToken && processedTokens.has(data.changeToken)) {
-                    // node.warn(`[subscribe - ${this.name}] Already processed this token:  ${data.changeToken}`)
                     return;
                 }
-
-                // // if the changedPath is a subset of the subscribedPattern, get the subscribedPattern from global context
-                // // ex. (subscribedPattern = 'a.b    ', changedPath = 'a.b.c') -> get subscribedPattern from global context
-                // let fullObject;
-                // if (data.pubKey !== prop.pattern) {
-                //     fullObject = global.get(prop.pattern);
-                //     node.warn(`[subscribe - ${this.name}] Full object: ${JSON.stringify(fullObject)}`)
-                // }
 
                 // Filter changedPaths to only those pertaining to the subscribe.
                 // Calculate Changed Properties - Properties are the relative paths of the changedPaths
@@ -97,16 +87,6 @@ module.exports = function(RED) {
                     entries.forEach(([token, time]) => processedTokens.set(token, time));
                 }
             });
-            
-            // // Subscribe to the pattern
-            // const subscription = subscribe(prop.pattern, prop.type, processChange);
-            // subscriptions.push(subscription);
-            
-            // // Log information about the subscription
-            // let typeName = prop.type === 'str' ? 
-            //     (prop.pattern.includes('*') ? 'Wildcard' : 'String') : 
-            //     'RegExp';
-            // node.status({ fill: "green", shape: "dot", text: `${validProperties.length} subscriptions` });
         });
         
         // Cleanup subscriptions when node is removed
@@ -125,5 +105,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType('subscribe-state', SubscribeState);
+    RED.nodes.registerType('subscribe-context', SubscribeState);
 }

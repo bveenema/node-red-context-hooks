@@ -16,40 +16,46 @@
             "c8817f5bc56c873d",
             "a8b1574e52723ca0",
             "2c04a505a0f5f8c7",
-            "d42169d84d7aa104",
             "afd87be0d9512efd",
             "0b77e5ea73175fe0",
-            "146bf279ccb2c5c2"
+            "146bf279ccb2c5c2",
+            "10e6ec3282d9a001"
         ],
-        "x": 34,
+        "x": 54,
         "y": 179,
         "w": 472,
         "h": 202
     },
     {
         "id": "c8817f5bc56c873d",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "a41d1f6b561abd55",
-        "name": "subscribe state",
-        "property": "test1",
-        "x": 140,
+        "name": "[SUB] test1",
+        "properties": [
+            "test1"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 150,
         "y": 340,
         "wires": [
             [
-                "d42169d84d7aa104"
+                "10e6ec3282d9a001"
             ]
         ]
     },
     {
         "id": "a8b1574e52723ca0",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "a41d1f6b561abd55",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test1",
+        "action": "replace",
         "func": "return msg.payload;",
-        "x": 360,
+        "x": 380,
         "y": 260,
         "wires": []
     },
@@ -75,31 +81,13 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 160,
+        "x": 180,
         "y": 260,
         "wires": [
             [
                 "a8b1574e52723ca0"
             ]
         ]
-    },
-    {
-        "id": "d42169d84d7aa104",
-        "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "g": "a41d1f6b561abd55",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 340,
-        "y": 340,
-        "wires": []
     },
     {
         "id": "afd87be0d9512efd",
@@ -123,7 +111,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 160,
+        "x": 180,
         "y": 300,
         "wires": [
             [
@@ -144,7 +132,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
+        "x": 400,
         "y": 300,
         "wires": [
             []
@@ -157,8 +145,26 @@
         "g": "a41d1f6b561abd55",
         "name": "Basic Publish Subscribe Flow",
         "info": "Note: this shows that setting the global context via a function node will NOT trigger the subscribe node to fire.",
-        "x": 180,
+        "x": 200,
         "y": 220,
+        "wires": []
+    },
+    {
+        "id": "10e6ec3282d9a001",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "a41d1f6b561abd55",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 340,
         "wires": []
     }
 ]

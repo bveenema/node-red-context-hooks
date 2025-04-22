@@ -1,6 +1,6 @@
 const helper = require('node-red-node-test-helper');
-const subscribeStateNode = require('../nodes/subscribe-state/subscribe-state.js');
-const setGlobalStateNode = require('../nodes/set-global-state/set-global-state.js');
+const subscribeStateNode = require('../nodes/subscribe-context/subscribe-context.js');
+const setGlobalStateNode = require('../nodes/publish-context/publish-context.js');
 
 helper.init(require.resolve('node-red'));
 
@@ -15,12 +15,12 @@ describe('Multi-Property Subscribe Functionality', function () {
     });
 
     it('should receive notifications for multiple properties', function (done) {
-        // Create a test flow with a subscribe-state node watching multiple properties
+        // Create a test flow with a subscribe-context node watching multiple properties
         const flow = [
             // Subscribe node watching multiple properties
             { 
                 id: 'subscribe1', 
-                type: 'subscribe-state', 
+                type: 'subscribe-context', 
                 name: 'multi-subscribe',
                 properties: ['propA', 'propB'],
                 wires: [['helperNode1']]
@@ -33,14 +33,14 @@ describe('Multi-Property Subscribe Functionality', function () {
             // Set nodes for different properties
             { 
                 id: 'setA', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set A',
                 property: 'propA',
                 func: 'return "value A";'
             },
             { 
                 id: 'setB', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set B',
                 property: 'propB',
                 func: 'return "value B";'
@@ -85,7 +85,7 @@ describe('Multi-Property Subscribe Functionality', function () {
         const flow = [
             { 
                 id: 'subscribe2', 
-                type: 'subscribe-state', 
+                type: 'subscribe-context', 
                 name: 'deep multi-subscribe',
                 properties: ['objA', 'objB'],
                 wires: [['helperNode2']]
@@ -97,14 +97,14 @@ describe('Multi-Property Subscribe Functionality', function () {
             // Initial object setup
             { 
                 id: 'setObjA', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set objA',
                 property: 'objA',
                 func: 'return { x: 1 };'
             },
             { 
                 id: 'setObjB', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set objB',
                 property: 'objB',
                 func: 'return { y: 2 };'
@@ -112,14 +112,14 @@ describe('Multi-Property Subscribe Functionality', function () {
             // Nested property updates
             { 
                 id: 'setNestedA', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set nested A',
                 property: 'objA.x',
                 func: 'return 100;'
             },
             { 
                 id: 'setNestedB', 
-                type: 'set-global-state', 
+                type: 'publish-context', 
                 name: 'set nested B',
                 property: 'objB.y',
                 func: 'return 200;'

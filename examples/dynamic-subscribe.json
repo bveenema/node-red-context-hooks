@@ -17,12 +17,12 @@
             "abbe8c26186ebaa5",
             "6f53d7f785e7ae15",
             "a909a087a1d14f1b",
-            "4bf609d928fc23b7",
             "e280121010b0a437",
             "ff4e611942baab3a",
             "f834149cb13e7daa",
-            "7db5cf65e900fb1b",
-            "b675ec0cce33be11"
+            "b675ec0cce33be11",
+            "60b1effc8794f52d",
+            "3976d647b29a009a"
         ],
         "x": 754,
         "y": 559,
@@ -42,10 +42,10 @@
     },
     {
         "id": "abbe8c26186ebaa5",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test10",
         "action": "replace",
         "func": "return msg.payload",
@@ -81,48 +81,30 @@
     },
     {
         "id": "a909a087a1d14f1b",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "subscribe state",
+        "name": "Top Level",
         "properties": [
             "test10"
         ],
         "propertyTypes": [
             "str"
         ],
-        "x": 860,
+        "x": 840,
         "y": 880,
         "wires": [
             [
-                "4bf609d928fc23b7"
+                "3976d647b29a009a"
             ]
         ]
     },
     {
-        "id": "4bf609d928fc23b7",
-        "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "g": "e9c02a1111bfb965",
-        "name": "debug 6",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1060,
-        "y": 880,
-        "wires": []
-    },
-    {
         "id": "e280121010b0a437",
-        "type": "set-global-state",
+        "type": "publish-context",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "set global state",
+        "name": "publish context",
         "property": "test10.tankFillValve.currentState.value",
         "action": "replace",
         "func": "return msg.payload",
@@ -152,37 +134,49 @@
         "y": 680,
         "wires": [
             [
-                "e280121010b0a437",
-                "b675ec0cce33be11"
+                "e280121010b0a437"
             ]
         ]
     },
     {
         "id": "f834149cb13e7daa",
-        "type": "subscribe-state",
+        "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "subscribe state",
+        "name": "Current State",
         "properties": [
             "test10.*.currentState"
         ],
         "propertyTypes": [
             "str"
         ],
-        "x": 860,
+        "x": 850,
         "y": 840,
         "wires": [
             [
-                "7db5cf65e900fb1b"
+                "60b1effc8794f52d"
             ]
         ]
     },
     {
-        "id": "7db5cf65e900fb1b",
+        "id": "b675ec0cce33be11",
+        "type": "publish-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 1080,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "60b1effc8794f52d",
         "type": "debug",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "debug 5",
+        "name": "debug 6",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -196,16 +190,21 @@
         "wires": []
     },
     {
-        "id": "b675ec0cce33be11",
-        "type": "set-global-state",
+        "id": "3976d647b29a009a",
+        "type": "debug",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "set global state",
-        "property": "test10.citySupplyValve.currentState.value",
-        "action": "replace",
-        "func": "return msg.payload",
-        "x": 1080,
-        "y": 720,
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 880,
         "wires": []
     }
 ]

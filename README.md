@@ -19,18 +19,18 @@ Omit the `--production` flag, in order to install the development dependencies f
 ## Usage
 This extension interacts with global context for state management.
 
-### set-global-state
+### publish-context
 This node is used to set values to the global context. After the value is set, an event is emitted to the system
-that the other nodes `subscribe-state` and `state-hook` can listen to.
+that the other nodes `subscribe-context` and `state-hook` can listen to.
 
-As an example, there is a simple flow to set kitchen temperature. The function in the `set-global-state` node extracts
+As an example, there is a simple flow to set kitchen temperature. The function in the `publish-context` node extracts
 the temperature value from the message payload and sets it to the global context with the property name `kitchen.temperature`.
 If the function returns `undefined`, the value is not updated and no event is emitted.
 
 **IMPORTANT!** In order for the subscribe and hook nodes to work, global context must be updated using this Node! Any context updated with this node will NOT trigger an event for the subscribe and hook nodes
 
-### subscribe-state
-This is a node that is used for listening to changes in the global context that are saved by the `set-global-state` node.
+### subscribe-context
+This is a node that is used for listening to changes in the global context that are saved by the `publish-context` node.
 If there has been a change in the context value, the node will forward the information about the change in the following format:
 
 ```
@@ -42,8 +42,8 @@ If there has been a change in the context value, the node will forward the infor
 }   
 ```
 
-As an example, let's listen to the kitchen temperature changes that were set in the previous `set-global-state` node example.
-First, add the `subscribe-state` node to the flow and configure it to listen to the property `kitchen.temperature`,
+As an example, let's listen to the kitchen temperature changes that were set in the previous `publish-context` node example.
+First, add the `subscribe-context` node to the flow and configure it to listen to the property `kitchen.temperature`,
 and then debug the message that is sent after kitchen temperature change is saved to the global context.
 
 #### Wildcard Subscriptions
@@ -68,7 +68,7 @@ Examples of wildcard patterns:
 
 ### state-hook
 A function node that provides a hook called `useGlobal`.
-This hook can be utilized to watch changes in the global context that were saved via `set-global-state` node.
+This hook can be utilized to watch changes in the global context that were saved via `publish-context` node.
 The `useGlobal` function takes in two parameters: property name from the global context and the default value for it.
 The second parameter is optional and is `null` by default. For example, to watch changes in the `kitchen.temperature` value,
 the `useGlobal` function should be used like this:
