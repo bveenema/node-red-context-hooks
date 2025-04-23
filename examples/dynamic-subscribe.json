@@ -22,12 +22,16 @@
             "f834149cb13e7daa",
             "b675ec0cce33be11",
             "60b1effc8794f52d",
-            "3976d647b29a009a"
+            "3976d647b29a009a",
+            "50a7f952cc83bba2",
+            "3cca022a0d014882",
+            "623d451ca3da0705",
+            "fc54b7af7f3bde4e"
         ],
         "x": 754,
         "y": 559,
-        "w": 432,
-        "h": 362
+        "w": 552,
+        "h": 402
     },
     {
         "id": "9bcf6c2fc0b5b64b",
@@ -92,7 +96,7 @@
             "str"
         ],
         "x": 840,
-        "y": 880,
+        "y": 920,
         "wires": [
             [
                 "3976d647b29a009a"
@@ -134,7 +138,8 @@
         "y": 680,
         "wires": [
             [
-                "e280121010b0a437"
+                "e280121010b0a437",
+                "b675ec0cce33be11"
             ]
         ]
     },
@@ -143,15 +148,15 @@
         "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
-        "name": "Current State",
+        "name": "Current State - Wildcard",
         "properties": [
             "test10.*.currentState"
         ],
         "propertyTypes": [
             "str"
         ],
-        "x": 850,
-        "y": 840,
+        "x": 880,
+        "y": 800,
         "wires": [
             [
                 "60b1effc8794f52d"
@@ -177,7 +182,7 @@
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
         "name": "debug 6",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -185,8 +190,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1060,
-        "y": 840,
+        "x": 1200,
+        "y": 800,
         "wires": []
     },
     {
@@ -195,6 +200,62 @@
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
         "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "50a7f952cc83bba2",
+        "type": "subscribe-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "Current or Target State Value - Regex",
+        "properties": [
+            "test10\\.[^.]*Valve\\.(current|target)State\\.value$"
+        ],
+        "propertyTypes": [
+            "regex"
+        ],
+        "x": 930,
+        "y": 880,
+        "wires": [
+            [
+                "3cca022a0d014882"
+            ]
+        ]
+    },
+    {
+        "id": "3cca022a0d014882",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "debug 11",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "623d451ca3da0705",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "debug 12",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -203,8 +264,28 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1060,
-        "y": 880,
+        "x": 1200,
+        "y": 840,
         "wires": []
+    },
+    {
+        "id": "fc54b7af7f3bde4e",
+        "type": "subscribe-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "All Valve States - Wildcard",
+        "properties": [
+            "test10.*Valve.*State"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 890,
+        "y": 840,
+        "wires": [
+            [
+                "623d451ca3da0705"
+            ]
+        ]
     }
 ]

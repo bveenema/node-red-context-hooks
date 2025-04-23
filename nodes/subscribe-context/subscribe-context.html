@@ -89,12 +89,12 @@
                     types: [
                         {
                             value: "str",
-                            label: "string",
+                            label: "string/wildcard",
                             icon:"red/images/typedInput/az.svg",
                             validate: function(v) { return true; }
                         },
                         {
-                            value: "re",
+                            value: "regex",
                             label: "regex",
                             icon: "red/images/typedInput/re.svg",
                             validate: function(v) { 
@@ -105,6 +105,12 @@
                                     return false;
                                 }
                             }
+                        },
+                        {
+                            value: "jsonata",
+                            label: "jsonata",
+                            icon: "red/images/typedInput/expr.svg",
+                            validate: function(v) { return true; }
                         }
                     ]
                 });
@@ -224,10 +230,13 @@
         <li><b>String/Wildcard:</b> Use exact string matching or wildcards (*). 
             <ul>
                 <li>Simple strings like <code>device.temperature</code> match that exact property and any nested properties</li>
-                <li>Patterns with <code>*</code> like <code>devices.*.temperature</code> match any property where * can be any value</li>
+                <li>Patterns with <code>*</code> like <code>devices.*.temperature</code> are treated as wildcards and match any property where * can be any value</li>
             </ul>
         </li>
         <li><b>Regex:</b> Use regular expressions for more complex pattern matching</li>
+        <li><b>JSONata:</b> Use JSONata expressions that evaluate against the value. Your expression should return a boolean value. 
+            For example: <code>$exists(type) and type='valve'</code> would match any object with a type property equal to 'valve'
+        </li>
     </ul>
     
     <h3>Pattern Examples</h3>
@@ -243,6 +252,12 @@
         <li><code>^devices\.(\w+)\.temperature$</code> - Match only temperature properties of devices</li>
         <li><code>^sensors\.[^\.]+\.value$</code> - Match the value property of any sensor</li>
         <li><code>^(temp|humidity)_\d+$</code> - Match properties starting with "temp_" or "humidity_" followed by numbers</li>
+    </ul>
+    
+    <p><b>JSONata Examples:</b></p>
+    <ul>
+        <li><code>$exists(type) and type='valve'</code> - Match any object with a type property equal to 'valve'</li>
+        <li><code>$exists(value) and value > 100</code> - Match any object with a value property greater than 100</li>
     </ul>
     
     <h3>Outputs</h3>

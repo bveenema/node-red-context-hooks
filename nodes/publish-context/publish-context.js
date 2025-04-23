@@ -217,6 +217,18 @@ module.exports = function(RED) {
                     }
                 });
 
+                // Add a single fire-hose publication for dynamic subscribers
+                // Use the top-level key for context
+                if(PubSub.countSubscriptions('__context_update__') > 0) {
+                    PubSub.publish('__context_update__', {
+                        value: finalFullObj,
+                        previousValue: prevFullObj,
+                        changedPaths: changedKeys,
+                        pubKey: topLevelKey,
+                        changeToken: changeToken
+                    });
+                }
+
                 if (done) {
                     done();
                 }
