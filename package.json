@@ -11,12 +11,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/bveenema/node-red-context-hook.git"
+    "url": "https://github.com/bveenema/node-red-context-pubsub.git"
   },
   "bugs": {
-    "url": "https://github.com/bveenema/node-red-context-hook/issues"
+    "url": "https://github.com/bveenema/node-red-context-pubsub/issues"
   },
-  "homepage": "https://github.com/bveenema/node-red-context-hook#readme",
+  "homepage": "https://github.com/bveenema/node-red-context-pubsub#readme",
   "node-red": {
     "nodes": {
       "publish-context": "nodes/publish-context/publish-context.js",

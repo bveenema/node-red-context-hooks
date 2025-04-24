@@ -2,7 +2,7 @@
 
 This project features publish and subscribe nodes for global context. It is especially useful for state management through global context, providing a [tag browser style](https://www.docs.inductiveautomation.com/docs/8.1/platform/tags/tag-browser) interface for your node-red project and aggregating your applications data and events into a local [unified namespace](https://www.iiot.university/blog/what-is-uns%3F).
 
-This project was orignally inspired by [node-red-contrib-context-hook](https://flows.nodered.org/node/@siirimangus/node-red-contrib-context-hook) but is a near complete re-write, with a different underlying pub/sub engine and providing many more features.
+This project was orignally inspired by [node-red-contrib-context-pubsub](https://flows.nodered.org/node/@siirimangus/node-red-contrib-context-pubsub) but is a near complete re-write, with a different underlying pub/sub engine and providing many more features.
 
 **Note: This package should be considered in beta stage. It has been tested in nominal cases but not in production. Use with care. Expect issues**
 
@@ -11,7 +11,7 @@ This project was orignally inspired by [node-red-contrib-context-hook](https://f
 Either use the Manage Palette option in the Node-RED menu, run the following command in your Node-RED user directory, or add it to your Dockerfile
 
 ```
-npm install --production --save @bveenema/node-red-context-hook
+npm install --production --save @bveenema/node-red-context-pubsub
 ```
 
 Omit the `--production` flag, in order to install the development dependencies for testing and coverage. Omit `--save` if you don't want to add it to your package.json.
@@ -68,32 +68,32 @@ To setup your local development environment first clone this repository, then us
 
 Using Podman:
 ```bash
-podman run -p 1880:1880 -v $(pwd):/data/node_modules/@bveenema/node-red-context-hook -d --name node-red-context-hook nodered/node-red
+podman run -p 1880:1880 -v $(pwd):/data/node_modules/@bveenema/node-red-context-pubsub -d --name node-red-context-pubsub nodered/node-red
 ```
 
 Or using Docker:
 ```bash
 # For Linux/Mac:
-docker run -p 1880:1880 -v "$(pwd)":/data/node_modules/@bveenema/node-red-context-hook -d --name node-red-context-hook nodered/node-red
+docker run -p 1880:1880 -v "$(pwd)":/data/node_modules/@bveenema/node-red-context-pubsub -d --name node-red-context-pubsub nodered/node-red
 
 # For Windows PowerShell:
-docker run -p 1880:1880 -v ${PWD}:/data/node_modules/@bveenema/node-red-context-hook -d --name node-red-context-hook nodered/node-red
+docker run -p 1880:1880 -v ${PWD}:/data/node_modules/@bveenema/node-red-context-pubsub -d --name node-red-context-pubsub nodered/node-red
 ```
 
 After you saved your changes to the code update the installation within the container with this command:
 
 For Podman:
 ```bash
-podman exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/ && podman restart node-red-context-hook
+podman exec -it node-red-context-pubsub npm install /data/node_modules/@bveenema/node-red-context-pubsub/ && podman restart node-red-context-pubsub
 ```
 
 For Docker:
 ```bash
 # For Linux/Mac:
-docker exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/ && docker restart node-red-context-hook
+docker exec -it node-red-context-pubsub npm install /data/node_modules/@bveenema/node-red-context-pubsub/ && docker restart node-red-context-pubsub
 
 # For Windows PowerShell:
-docker exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/; docker restart node-red-context-hook 
+docker exec -it node-red-context-pubsub npm install /data/node_modules/@bveenema/node-red-context-pubsub/; docker restart node-red-context-pubsub 
 ```
 
 ## Roadmap
