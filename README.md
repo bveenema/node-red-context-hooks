@@ -1,14 +1,14 @@
-# node-red-context-hook
+# node-red-context-pubsub
 
-A [Node-RED](https://nodered.org/) extension for global context state management. This project features publish and subscribe nodes that allow you to subscribe to global context. It uses nodejs events module to emit events when global context changes instead of building complex, tightly coupled flows with `switch` and `function` nodes. This allows for better state management in Node Red projects
-- Deep Subscribe: subscriptions to a high level object will be notified if any key within the object is updated
-- Multi-Subscribe: subscribe nodes can specify more than 1 state and will receive a notification when any of them change.
-- Wildcard Subscribe: use patterns with wildcards (*) to subscribe to multiple properties at once.
-- Append Publish: choose between appending to the current state or overriding it.
+This project features publish and subscribe nodes for global context. It is especially useful for state management through global context, providing a [tag browser style](https://www.docs.inductiveautomation.com/docs/8.1/platform/tags/tag-browser) interface for your node-red project and aggregating your applications data and events into a local [unified namespace](https://www.iiot.university/blog/what-is-uns%3F).
+
+This project was orignally inspired by [node-red-contrib-context-hook](https://flows.nodered.org/node/@siirimangus/node-red-contrib-context-hook) but is a near complete re-write, with a different underlying pub/sub engine and providing many more features.
+
+**Note: This package should be considered in beta stage. It has been tested in nominal cases but not in production. Use with care. Expect issues**
 
 ## Installation
 
-Either use the Manage Palette option in the Node-RED menu or run the following command in your Node-RED user directory
+Either use the Manage Palette option in the Node-RED menu, run the following command in your Node-RED user directory, or add it to your Dockerfile
 
 ```
 npm install --production --save @bveenema/node-red-context-hook
@@ -17,83 +17,50 @@ npm install --production --save @bveenema/node-red-context-hook
 Omit the `--production` flag, in order to install the development dependencies for testing and coverage. Omit `--save` if you don't want to add it to your package.json.
 
 ## Usage
-This extension interacts with global context for state management.
+`Context Pub/Sub` provides two simple nodes, publish-context and subscribe-context. They can be used very basically and expanded on as your application develops.
 
 ### publish-context
-This node is used to set values to the global context. After the value is set, an event is emitted to the system
-that the other nodes `subscribe-context` and `state-hook` can listen to.
+This node stores data in Node-Reds global context. After the value is set, it triggers any `subscribe-context` nodes that are listening, causing them to trigger their flow.
 
-As an example, there is a simple flow to set kitchen temperature. The function in the `publish-context` node extracts
-the temperature value from the message payload and sets it to the global context with the property name `kitchen.temperature`.
-If the function returns `undefined`, the value is not updated and no event is emitted.
+Publish Context has the following inputs:
+- Name - Name of the node
+- Property - Name of the property to store the value in global context. Can use dot notation to update at sepecific point in global context (ex: "model.view.valveTable)
+- Action - Replace or Append
+- Value - a function to process the incoming msg object and return whatever should be published to property
 
-**IMPORTANT!** In order for the subscribe and hook nodes to work, global context must be updated using this Node! Any context updated with this node will NOT trigger an event for the subscribe and hook nodes
+**IMPORTANT!** In order for the subscribe-context node to work, global context must be updated using this Node! Any context updated outside this node will NOT trigger subscribing nodes, but will update global context
 
 ### subscribe-context
-This is a node that is used for listening to changes in the global context that are saved by the `publish-context` node.
-If there has been a change in the context value, the node will forward the information about the change in the following format:
-
-```
+This node listens for changes in the global context that are updated by the `publish-context` node. When the subscribed global context changes, the triggers a message with the following format
+```json
 {
-    property,
-    previousValue,
-    value,
-    payload: value
-}   
-```
-
-As an example, let's listen to the kitchen temperature changes that were set in the previous `publish-context` node example.
-First, add the `subscribe-context` node to the flow and configure it to listen to the property `kitchen.temperature`,
-and then debug the message that is sent after kitchen temperature change is saved to the global context.
-
-#### Wildcard Subscriptions
-You can use wildcards (*) in your property patterns to subscribe to multiple properties with a single subscription:
-
-```
-{
-    property,           // The actual property that changed
-    subscribedPattern,  // The wildcard pattern used
-    previousValue,
-    value,
-    payload: value,
-    isWildcardMatch: true
+    "payload": {type: any}, // the new value - the type will be that of the subscribed value stored in global context
+    "previousValue": {type: any}, // the previous value - the type will be that of the subscribed value stored in global context
+    "changedPaths": {type: array}, // the full path to all the properties in the payload that changed
+    "changedProperties": {type: array}, // the properties in the payload that changed
+    "subscribedPattern": {type: string}, // the matched pattern of the subscriber
 }
 ```
 
-Examples of wildcard patterns:
-- `devices.*` - Subscribe to all direct children of the devices object
-- `devices.*.temperature` - Subscribe to the temperature property of any child under devices
-- `*.temperature` - Subscribe to any temperature property at the root level
-- `sensors.*.*` - Subscribe to all grandchildren of the sensors object
+Subscribe supports
+- subscriptions of any depth (ie, publishes to `model.view.valveTable` will trigger subscriptions to `model` and `model.view`)
+- multiple subscriptions per node, with each subscription resulting in a separate message triggering a flow
+- dynamic subscriptions using:
+  - Wildcards (`model.view.*Table` or `model.*Valve.currentValue.value`)
+  - Regex (`model\.[^.]*Valve\.(current|target)State\.value$` *the value of either the currentState or targetState of any key ending in "Valve" in model*)
+  - JSONata (`model.**[type="Valve"]` *any key in model that has a subkey "type" of value "Valve", ie - all "Valve" type objects in model*)
 
-### state-hook
-A function node that provides a hook called `useGlobal`.
-This hook can be utilized to watch changes in the global context that were saved via `publish-context` node.
-The `useGlobal` function takes in two parameters: property name from the global context and the default value for it.
-The second parameter is optional and is `null` by default. For example, to watch changes in the `kitchen.temperature` value,
-the `useGlobal` function should be used like this:
+**Note: Dynamic Subscriptions use considerably more processing power than standard subscriptions. Care should be taken in their deployment**
 
-```
-const temperature = useGlobal('kitchen.temperature');
-```
-
-The `state-hook` node also supports wildcard patterns in the property name:
-
-```
-// Subscribe to all temperature values in any device
-const allDeviceTemps = useGlobal('devices.*.temperature');
-```
-
-The `state-hook` node comes in handy when the logic for deciding the next state for an output depends on many
-incoming signals. Instead of connecting the signals with `switch`, `function` etc. nodes, all the logic can be handled
-within the `state-hook` node.
 
 ## Example Flows
 Several example flows are included to demonstrate different features:
-- `examples/simple.json` - Basic usage of set and subscribe
+- `examples/basic.json` - Basic usage of set and subscribe
 - `examples/deep-subscribe.json` - Deep property subscriptions
+- `examples/multi-subscribe.json` - Multi value subscriptions
 - `examples/dynamic-subscribe.json` - Working with dynamic property updates
-- `examples/wildcard-subscribe.json` - Using wildcard patterns to subscribe to multiple properties
+- `examples/append-publish.json` - Appending to the global context instead of Replacing
+- `examples/stress-test.json` - A simple stress test that triggers multiple dynamic subscriptions frequently
 
 ## Contribution
 
@@ -129,4 +96,5 @@ docker exec -it node-red-context-hook npm install /data/node_modules/@bveenema/n
 docker exec -it node-red-context-hook npm install /data/node_modules/@bveenema/node-red-context-hook/; docker restart node-red-context-hook 
 ```
 
-*Note: On SELinux enabled machines it's necessary to allow containers access to your working directory like this: `chcon -t container_file_t $(pwd)`*
+## Roadmap
+- Build JSONata and Regex testing environments

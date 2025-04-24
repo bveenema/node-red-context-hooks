@@ -39,9 +39,9 @@
         "type": "comment",
         "z": "f6f2187d.f17ca8",
         "g": "1ca17a844f5dc7a3",
-        "name": "Append or Replace Publish FLow",
+        "name": "Append Publish Flow",
         "info": "",
-        "x": 910,
+        "x": 880,
         "y": 220,
         "wires": []
     },

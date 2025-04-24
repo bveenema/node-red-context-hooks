@@ -212,7 +212,7 @@
 
 <script type="text/html" data-help-name="subscribe-context">
     <h3>About</h3>
-    <p>A node that subscribes to global state updates, including nested property changes, wildcard patterns, and regex patterns.</p>
+    <p>A node that subscribes to global context updates, including nested property changes, wildcard patterns, regex patterns, and JSONata expressions.</p>
     
     <h3>Details</h3>
     <p>This node monitors changes to one or more specified properties in Node-RED's global context. When any of the 
@@ -234,8 +234,8 @@
             </ul>
         </li>
         <li><b>Regex:</b> Use regular expressions for more complex pattern matching</li>
-        <li><b>JSONata:</b> Use JSONata expressions that evaluate against the value. Your expression should return a boolean value. 
-            For example: <code>$exists(type) and type='valve'</code> would match any object with a type property equal to 'valve'
+        <li><b>JSONata:</b> Use JSONata expressions that evaluate against the value. Your expression should return an array of matching objects. 
+            The node will use these to find matching paths in the context data. See the Dynamic Subscribe example for more details.
         </li>
     </ul>
     
@@ -256,30 +256,21 @@
     
     <p><b>JSONata Examples:</b></p>
     <ul>
-        <li><code>$exists(type) and type='valve'</code> - Match any object with a type property equal to 'valve'</li>
-        <li><code>$exists(value) and value > 100</code> - Match any object with a value property greater than 100</li>
+        <li><code>$</code> - Return the entire object (will match all paths)</li>
+        <li><code>model.**[type="Valve"]</code> - Match device objects with a type property equal to 'valve'</li>
     </ul>
     
     <h3>Outputs</h3>
     <p>The output message contains the following properties:</p>
     <ul>
-        <li><code>msg.property</code> - The property being monitored that changed</li>
+        <li><code>msg.payload</code> - The current value after the change</li>
         <li><code>msg.previousValue</code> - The value before the change</li>
-        <li><code>msg.value</code> - The current value after the change</li>
-        <li><code>msg.payload</code> - Same as <code>msg.value</code></li>
+        <li><code>msg.changedPaths</code> - An array of all paths that changed, including the main path and nested paths</li>
+        <li><code>msg.changedProperties</code> - An array of relative paths that changed within the subscribed property</li>
+        <li><code>msg.subscribedPattern</code> - The original pattern used for the subscription</li>
     </ul>
     
-    <p><b>For wildcard and regex matches, additional fields are included:</b></p>
-    <ul>
-        <li><code>msg.subscribedPattern</code> - The original pattern used</li>
-        <li><code>msg.isPatternMatch</code> - Set to <code>true</code> for pattern matches</li>
-        <li><code>msg.patternType</code> - The type of pattern ("wildcard" or "regex")</li>
-    </ul>
-    
-    <p><b>For nested property changes, additional fields are included:</b></p>
-    <ul>
-        <li><code>msg.deepChange</code> - Set to <code>true</code> for nested property changes</li>
-        <li><code>msg.changedPath</code> - The full path of the property that changed (e.g., <code>device.status.online</code>)</li>
-        <li><code>msg.changedProperty</code> - The path relative to the subscribed property (e.g., <code>status.online</code>)</li>
-    </ul>
+    <h3>Deduplication</h3>
+    <p>The node implements efficient token-based deduplication to prevent duplicate messages when multiple criteria match
+    the same context update. It uses time-based cleanup to maintain memory efficiency.</p>
 </script>

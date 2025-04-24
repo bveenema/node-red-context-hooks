@@ -31,14 +31,14 @@
         "type": "subscribe-context",
         "z": "f6f2187d.f17ca8",
         "g": "a41d1f6b561abd55",
-        "name": "[SUB] test1",
+        "name": "subscribe context",
         "properties": [
             "test1"
         ],
         "propertyTypes": [
             "str"
         ],
-        "x": 150,
+        "x": 160,
         "y": 340,
         "wires": [
             [

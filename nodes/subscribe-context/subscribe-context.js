@@ -101,6 +101,28 @@ module.exports = function(RED) {
             };
         };
 
+        // Then in JavaScript:
+        const findPaths = (obj, matchingObjects) => {
+            const paths = [];
+            
+            function traverse(obj, currentPath = 'test10') {
+                for (const key in obj) {
+                    const value = obj[key];
+                    if (typeof value === 'object' && value !== null) {
+                        // Check if this object matches any of our target objects
+                        if (matchingObjects.some(match => match === value)) {
+                            paths.push(currentPath + '.' + key);
+                        }
+                        // Continue traversing
+                        traverse(value, currentPath + '.' + key);
+                    }
+                }
+            }
+    
+            traverse(obj.test10);
+            return paths;
+        }
+
         // Build matcher based on subscription type
         const buildMatcher = (prop) => {
             switch (prop.type) {
@@ -113,29 +135,29 @@ module.exports = function(RED) {
                     const wildcardPattern = prop.pattern.replace(/\./g, '\\.').replace(/\*/g, '[^.]*');
                     const wildcardRegex = new RegExp(`^${wildcardPattern}$`);
                     
-                    return topic => {
-                        // topic should be an array of changedPaths
-                        if(!Array.isArray(topic)) {
-                            node.error(`Topic is not an array: ${topic}`);
+                    return changedPaths => {
+                        // changedPaths should be an array
+                        if(!Array.isArray(changedPaths)) {
+                            node.error(`changedPaths is not an array: ${changedPaths}`);
                             return false;
                         }                     
 
                         // return all paths that match the pattern using the pre-compiled regex
-                        return topic.filter(path => wildcardRegex.test(path));
+                        return changedPaths.filter(path => wildcardRegex.test(path));
                     };
                 
                 case 'regex':
                     try {
                         const regex = new RegExp(prop.pattern);
-                        return topic => {
-                            // topic should be an array of changedPaths
-                            if(!Array.isArray(topic)) {
-                                node.error(`Topic is not an array: ${topic}`);
+                        return changedPaths => {
+                            // changedPaths should be an array
+                            if(!Array.isArray(changedPaths)) {
+                                node.error(`changedPaths is not an array: ${changedPaths}`);
                                 return false;
                             }
 
                             // return all paths that match the pattern
-                            return topic.filter(path => regex.test(path));
+                            return changedPaths.filter(path => regex.test(path));
                         };
                     } catch (e) {
                         node.error(`Invalid regex pattern: ${prop.pattern}`);
@@ -145,9 +167,22 @@ module.exports = function(RED) {
                 case 'jsonata':
                     try {
                         const expr = jsonata(prop.pattern);
-                        return (topic, value) => {
+                        return async (value, changedPaths) => {
                             try {
-                                return !!expr.evaluate(value);
+                                //changedPaths should be an array
+                                if(!Array.isArray(changedPaths)) {
+                                    node.error(`changedPaths is not an array: ${changedPaths}`);
+                                    return false;
+                                }
+
+                                const result = await expr.evaluate(value);
+
+                                if(!Array.isArray(result)) {
+                                    node.error(`JSONata expression must return an array: ${prop.pattern}`);
+                                    return false;
+                                }
+
+                                return findPaths(value, result).filter(path => changedPaths.includes(path));
                             } catch (e) {
                                 node.error(`JSONata evaluation error: ${e.message}`);
                                 return false;
@@ -185,20 +220,21 @@ module.exports = function(RED) {
             node.log(`Setting up dynamic subscription with ${dynamicProps.length} patterns`);
             
             // Create a single subscription to the context update firehose
-            const dynamicToken = PubSub.subscribe('__context_update__', (topic, data) => {
+            const dynamicToken = PubSub.subscribe('__context_update__', async (topic, data) => {
                 if (!data || !data.pubKey) return;
                 
-                dynamicProps.forEach(({matcher, cfg}) => {
+                for (const {matcher, cfg} of dynamicProps) {
                     let matched = [];
+                    
                     if(cfg.type === 'jsonata') {
-                        matched = matcher(data.pubKey, data.value);
+                        matched = await matcher(data.value, data.changedPaths);
                     } else if(cfg.type === 'wildcard') {
                         matched = matcher(data.changedPaths);
                     } else if(cfg.type === 'regex') {
                         matched = matcher(data.changedPaths);
                     }
 
-                    if (matched.length > 0) {
+                    if (matched && matched.length > 0) {
                         // Use the same handler logic as static subscriptions
                         matched.forEach(path => {
                             const dataClone = cloneDeep(data);
@@ -207,7 +243,7 @@ module.exports = function(RED) {
                             handlerFor(path)(null, dataClone);
                         });
                     }
-                });
+                }
             });
             
             // Store the subscription for cleanup

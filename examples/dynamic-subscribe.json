@@ -16,17 +16,18 @@
             "9bcf6c2fc0b5b64b",
             "abbe8c26186ebaa5",
             "6f53d7f785e7ae15",
-            "a909a087a1d14f1b",
             "e280121010b0a437",
             "ff4e611942baab3a",
             "f834149cb13e7daa",
             "b675ec0cce33be11",
             "60b1effc8794f52d",
-            "3976d647b29a009a",
             "50a7f952cc83bba2",
             "3cca022a0d014882",
             "623d451ca3da0705",
-            "fc54b7af7f3bde4e"
+            "fc54b7af7f3bde4e",
+            "937bd63a83f931d3",
+            "8c708f28e34231e6",
+            "029cdac2ca67d225"
         ],
         "x": 754,
         "y": 559,
@@ -80,26 +81,6 @@
         "wires": [
             [
                 "abbe8c26186ebaa5"
-            ]
-        ]
-    },
-    {
-        "id": "a909a087a1d14f1b",
-        "type": "subscribe-context",
-        "z": "f6f2187d.f17ca8",
-        "g": "e9c02a1111bfb965",
-        "name": "Top Level",
-        "properties": [
-            "test10"
-        ],
-        "propertyTypes": [
-            "str"
-        ],
-        "x": 840,
-        "y": 920,
-        "wires": [
-            [
-                "3976d647b29a009a"
             ]
         ]
     },
@@ -182,7 +163,7 @@
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
         "name": "debug 6",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -192,24 +173,6 @@
         "statusType": "auto",
         "x": 1200,
         "y": 800,
-        "wires": []
-    },
-    {
-        "id": "3976d647b29a009a",
-        "type": "debug",
-        "z": "f6f2187d.f17ca8",
-        "g": "e9c02a1111bfb965",
-        "name": "debug 7",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1200,
-        "y": 920,
         "wires": []
     },
     {
@@ -238,7 +201,7 @@
         "z": "f6f2187d.f17ca8",
         "g": "e9c02a1111bfb965",
         "name": "debug 11",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -287,5 +250,54 @@
                 "623d451ca3da0705"
             ]
         ]
+    },
+    {
+        "id": "937bd63a83f931d3",
+        "type": "subscribe-context",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "JSONata",
+        "properties": [
+            "test10.**[type=\"Valve\"]"
+        ],
+        "propertyTypes": [
+            "jsonata"
+        ],
+        "x": 840,
+        "y": 920,
+        "wires": [
+            [
+                "8c708f28e34231e6"
+            ]
+        ]
+    },
+    {
+        "id": "8c708f28e34231e6",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "029cdac2ca67d225",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "g": "e9c02a1111bfb965",
+        "name": "Note",
+        "info": "Use care when deploying dynamic subscriptions\n\nDynamic subscriptions are more resource\nintensive than standard subscriptions as they\nrequire processing the entire change to \nsearch for matches\n\nIn many cases, multi-subscribe will suffice\ninstead of dynamic subscribe.\n\nOnly use dynamic subscribe when you expect\nthe structure of the global context to change\nfrequently. If the structure is largelly\nstatic and you are only updating values, a\nmulti-subscribe will provide all the\nfunctionality with much less resource usage.\n\nIf you are going to use dynamic subscriptions\nits worth doing a stress test on the target\ndevice",
+        "x": 1090,
+        "y": 600,
+        "wires": []
     }
 ]

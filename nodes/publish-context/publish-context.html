@@ -67,7 +67,7 @@
         <input type="text" id="node-input-name" placeholder="name">
     </div>
     <div class="form-row" style="display: flex;">
-        <label for="node-input-property"><i class="fa fa-tag"></i> State property</label>
+        <label for="node-input-property"><i class="fa fa-tag"></i> Property</label>
         <input type="text" id="node-input-property" placeholder="property">
     </div>
     <div class="form-row" style="display: flex;">
@@ -78,7 +78,7 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-func"><i class="fa fa-wrench"></i> State value</label>
+        <label for="node-input-func"><i class="fa fa-wrench"></i> Value</label>
         <input type="hidden" id="node-input-func">
     </div>
     <div class="form-row node-text-editor-row">
@@ -109,7 +109,7 @@
     
     <h3>Configuration</h3>
     <dl>
-        <dt>State property</dt>
+        <dt>Property</dt>
         <dd>The name of the property to set in global context. Use dot notation for nested properties (e.g., <code>user.settings.theme</code>).</dd>
         
         <dt>Action</dt>
@@ -129,7 +129,7 @@
             </ul>
         </dd>
         
-        <dt>State value</dt>
+        <dt>Value</dt>
         <dd>A JavaScript function that returns the value to set or append. The function has access to the incoming <code>msg</code> object.</dd>
     </dl>
     
@@ -139,12 +139,12 @@
 return msg.payload;</pre>
     
     <p><b>Setting a nested property:</b></p>
-    <p>Configure the State property as <code>device.status.online</code> and use:</p>
+    <p>Configure the Property as <code>device.status.online</code> and use:</p>
     <pre>// Sets device.status.online to true/false
 return msg.payload === "connected";</pre>
     
     <p><b>Setting an object:</b></p>
-    <p>Configure the State property as <code>user</code> and use:</p>
+    <p>Configure the Property as <code>user</code> and use:</p>
     <pre>// Sets the entire user object
 return {
   name: msg.payload.name,
@@ -162,5 +162,6 @@ return Buffer.from(msg.payload);</pre>
     <h3>Notes</h3>
     <p><b>Important:</b> To ensure proper event handling, all global context values that need to be monitored should be updated using this node. 
     Changes made directly to global context without this node will not trigger events for subscribers.</p>
-    <p>Returning <code>undefined</code> from the function will leave the existing value unchanged.</p>
+    <p>Returning <code>undefined</code> from the function will prevent any update and generate an error message.</p>
+    <p>The node generates change tokens for each update operation, which helps subscribers track related changes across multiple properties.</p>
 </script>

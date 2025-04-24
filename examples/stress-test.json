@@ -1,0 +1,1435 @@
+[
+    {
+        "id": "d85390f5639b6c73",
+        "type": "group",
+        "z": "d69a31fa5a9f0984",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "8ef209e673e81999",
+            "fb797651db962061",
+            "ddcbabc7fece7848",
+            "e6d19309b170766d",
+            "b891278488e45c91",
+            "343bb56f7c0452f3",
+            "b848ce36ab8b1793",
+            "4b1a3639f698fc3c",
+            "9859522da963539c",
+            "8642502bac0d8a27",
+            "d25057b1c43ae4d4",
+            "875f54fc517834e7",
+            "72c7eb661a292d90",
+            "930459e0f16a029e",
+            "f0051dbd3981658c",
+            "eb51ebfd14cbb4f1",
+            "3a9676202616f8dc",
+            "e93918d8d45ad955",
+            "349870b97dac6887",
+            "2ddd51f3a2ad61a1",
+            "a0ec2276dce6f84b",
+            "f161872db21e0437",
+            "6b8a01880a6811f4",
+            "10a2fa85eac07afe",
+            "650ce71d0616c4cb",
+            "4b298534e8d076a4",
+            "f3bef15e844d114d",
+            "81c917d2651e7c2f",
+            "80744f0f0cce7ee3",
+            "cb448377159a2206",
+            "d658e82871ca2232",
+            "670803f784ea258a",
+            "db25fdb4280b507b",
+            "0f270f77d5c03d0b",
+            "733c28123ba3cddd",
+            "88c2957f4f804a6e",
+            "6824521b017b056b",
+            "f081a401affeefbf",
+            "be961e3a5797dc5f",
+            "71bb6c0b82efcb77",
+            "d669bdcf1a866cd3",
+            "2c4776f5895db1d7",
+            "274a785b0366796e",
+            "01fdf799d6ee57f9",
+            "5e216bf0b23edef3",
+            "7bf8e9d9e8c3297a",
+            "cc0ec500fb27fe77",
+            "e8dcf923176da6e1",
+            "9b9101bed14bd280",
+            "76118380f231d042",
+            "c641b1f9ed9e4164",
+            "42fe018c5dfaaea5",
+            "8f28d9d3266574d9",
+            "f1b7b552f9a7597c",
+            "2b5fedb665aec84a",
+            "c45bfdb423ac7e56",
+            "1bf48d11237b0acf",
+            "68d56cbd3e44e39a",
+            "2b6b3a7c9a163b86",
+            "b67b50505916f287",
+            "d17866b9a30bf42b",
+            "0c79c11a35261189",
+            "fcac255bd783a9b5",
+            "52107bb35e91a577",
+            "392ffadcda5f8851",
+            "099472de5d4bbe70",
+            "b172a99caf2ef469",
+            "89ad48c07a4f5e15",
+            "76a2e44b453356d3",
+            "e5a42227470a6cb7",
+            "44234b6e57a54a1c",
+            "c5eaaeb01a509d68",
+            "b85a2db468b4a2fb"
+        ],
+        "x": 114,
+        "y": 99,
+        "w": 1012,
+        "h": 942
+    },
+    {
+        "id": "8ef209e673e81999",
+        "type": "comment",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Dynamic Subscribe Stress Test",
+        "info": "",
+        "x": 270,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "fb797651db962061",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "ddcbabc7fece7848",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Set Object",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"log\":{\"name\":\"log\",\"version\":\"1.0.0\",\"description\":\"A flexible logging system for embedded applications with Protocol Buffers support\",\"type\":\"SuperLog\",\"logs\":{\"name\":\"logs\",\"display_name\":\"Logs\",\"type\":\"LogMessage\",\"description\":\"The logs\",\"repeated\":true,\"read-only\":true,\"quality\":0},\"currentLevel\":{\"name\":\"currentLevel\",\"display_name\":\"Current Level\",\"type\":\"SuperLogLevel\",\"description\":\"The current log level threshold\",\"read-only\":true,\"value\":0,\"quality\":0},\"setLevel\":{\"name\":\"setLevel\",\"display_name\":\"Set Level\",\"type\":\"SuperLogLevel\",\"description\":\"The log level threshold to set\",\"read-only\":false,\"value\":0,\"quality\":0}},\"tankFillValve\":{\"name\":\"tankFillValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_TankFillValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"citySupplyValve\":{\"name\":\"citySupplyValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_CitySupplyValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"waterShutoffValve\":{\"name\":\"waterShutoffValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_WaterShutoffValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"filterBypassValve\":{\"name\":\"filterBypassValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_FilterBypassValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"heaterByPassValve\":{\"name\":\"heaterByPassValve\",\"file\":\"src/main.cpp\",\"pin_name\":\"pin_HeaterByPassValve\",\"version\":\"1.0.0\",\"description\":\"Simple valve model that can be open, closed or traversing.\",\"type\":\"Valve\",\"currentState\":{\"name\":\"currentState\",\"display_name\":\"Current State\",\"type\":\"ValveState\",\"description\":\"The current state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"targetState\":{\"name\":\"targetState\",\"display_name\":\"Target State\",\"type\":\"ValveState\",\"description\":\"The target state of the valve\",\"read-only\":true,\"value\":0,\"quality\":0},\"setState\":{\"name\":\"setState\",\"display_name\":\"Set State\",\"type\":\"ValveState\",\"description\":\"The state to set the valve to\",\"read-only\":false,\"value\":0,\"quality\":0}},\"view\":{\"valveTable\":[{\"Name\":\"tankFillValve\",\"Pin\":\"pin_TankFillValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"citySupplyValve\",\"Pin\":\"pin_CitySupplyValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"waterShutoffValve\",\"Pin\":\"pin_WaterShutoffValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"filterBypassValve\",\"Pin\":\"pin_FilterBypassValve\",\"currentState\":0,\"targetState\":0,\"setState\":0},{\"Name\":\"heaterByPassValve\",\"Pin\":\"pin_HeaterByPassValve\",\"currentState\":0,\"targetState\":0,\"setState\":0}]}}",
+        "payloadType": "json",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            [
+                "fb797651db962061"
+            ]
+        ]
+    },
+    {
+        "id": "e6d19309b170766d",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "b891278488e45c91",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.2",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 240,
+        "wires": [
+            [
+                "e6d19309b170766d",
+                "343bb56f7c0452f3"
+            ]
+        ]
+    },
+    {
+        "id": "343bb56f7c0452f3",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "b848ce36ab8b1793",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "4b1a3639f698fc3c",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.3",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 320,
+        "wires": [
+            [
+                "b848ce36ab8b1793",
+                "9859522da963539c"
+            ]
+        ]
+    },
+    {
+        "id": "9859522da963539c",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "8642502bac0d8a27",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "d25057b1c43ae4d4",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.4",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 400,
+        "wires": [
+            [
+                "8642502bac0d8a27",
+                "875f54fc517834e7"
+            ]
+        ]
+    },
+    {
+        "id": "875f54fc517834e7",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "72c7eb661a292d90",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "930459e0f16a029e",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 480,
+        "wires": [
+            [
+                "72c7eb661a292d90",
+                "f0051dbd3981658c"
+            ]
+        ]
+    },
+    {
+        "id": "f0051dbd3981658c",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "eb51ebfd14cbb4f1",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "3a9676202616f8dc",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.6",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 560,
+        "wires": [
+            [
+                "eb51ebfd14cbb4f1",
+                "e93918d8d45ad955"
+            ]
+        ]
+    },
+    {
+        "id": "e93918d8d45ad955",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "349870b97dac6887",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "2ddd51f3a2ad61a1",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.7",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 640,
+        "wires": [
+            [
+                "349870b97dac6887",
+                "a0ec2276dce6f84b"
+            ]
+        ]
+    },
+    {
+        "id": "a0ec2276dce6f84b",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "f161872db21e0437",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "6b8a01880a6811f4",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.8",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 720,
+        "wires": [
+            [
+                "f161872db21e0437",
+                "10a2fa85eac07afe"
+            ]
+        ]
+    },
+    {
+        "id": "10a2fa85eac07afe",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "650ce71d0616c4cb",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "4b298534e8d076a4",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.9",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 800,
+        "wires": [
+            [
+                "650ce71d0616c4cb",
+                "f3bef15e844d114d"
+            ]
+        ]
+    },
+    {
+        "id": "f3bef15e844d114d",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "81c917d2651e7c2f",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "80744f0f0cce7ee3",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1.0",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 880,
+        "wires": [
+            [
+                "81c917d2651e7c2f",
+                "cb448377159a2206"
+            ]
+        ]
+    },
+    {
+        "id": "cb448377159a2206",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "d658e82871ca2232",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.tankFillValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "670803f784ea258a",
+        "type": "inject",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Update Valve",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1.1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 240,
+        "y": 960,
+        "wires": [
+            [
+                "d658e82871ca2232",
+                "db25fdb4280b507b"
+            ]
+        ]
+    },
+    {
+        "id": "db25fdb4280b507b",
+        "type": "publish-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "publish context",
+        "property": "test10.citySupplyValve.currentState.value",
+        "action": "replace",
+        "func": "return msg.payload",
+        "x": 440,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "0f270f77d5c03d0b",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current State - Wildcard",
+        "properties": [
+            "test10.*.currentState"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 700,
+        "y": 200,
+        "wires": [
+            [
+                "733c28123ba3cddd"
+            ]
+        ]
+    },
+    {
+        "id": "733c28123ba3cddd",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 14",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "88c2957f4f804a6e",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current or Target State Value - Regex",
+        "properties": [
+            "test10\\.[^.]*Valve\\.(current|target)State\\.value$"
+        ],
+        "propertyTypes": [
+            "regex"
+        ],
+        "x": 750,
+        "y": 280,
+        "wires": [
+            [
+                "6824521b017b056b"
+            ]
+        ]
+    },
+    {
+        "id": "6824521b017b056b",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 16",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f081a401affeefbf",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "be961e3a5797dc5f",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "All Valve States - Wildcard",
+        "properties": [
+            "test10.*Valve.*State"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 710,
+        "y": 240,
+        "wires": [
+            [
+                "f081a401affeefbf"
+            ]
+        ]
+    },
+    {
+        "id": "71bb6c0b82efcb77",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "JSONata",
+        "properties": [
+            "test10.**[type=\"Valve\"]"
+        ],
+        "propertyTypes": [
+            "jsonata"
+        ],
+        "x": 660,
+        "y": 320,
+        "wires": [
+            [
+                "d669bdcf1a866cd3"
+            ]
+        ]
+    },
+    {
+        "id": "d669bdcf1a866cd3",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 18",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "2c4776f5895db1d7",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current State - Wildcard",
+        "properties": [
+            "test10.*.currentState"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 700,
+        "y": 360,
+        "wires": [
+            [
+                "274a785b0366796e"
+            ]
+        ]
+    },
+    {
+        "id": "274a785b0366796e",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 15",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "01fdf799d6ee57f9",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current or Target State Value - Regex",
+        "properties": [
+            "test10\\.[^.]*Valve\\.(current|target)State\\.value$"
+        ],
+        "propertyTypes": [
+            "regex"
+        ],
+        "x": 750,
+        "y": 440,
+        "wires": [
+            [
+                "5e216bf0b23edef3"
+            ]
+        ]
+    },
+    {
+        "id": "5e216bf0b23edef3",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 16",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "7bf8e9d9e8c3297a",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "cc0ec500fb27fe77",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "All Valve States - Wildcard",
+        "properties": [
+            "test10.*Valve.*State"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 710,
+        "y": 400,
+        "wires": [
+            [
+                "7bf8e9d9e8c3297a"
+            ]
+        ]
+    },
+    {
+        "id": "e8dcf923176da6e1",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "JSONata",
+        "properties": [
+            "test10.**[type=\"Valve\"]"
+        ],
+        "propertyTypes": [
+            "jsonata"
+        ],
+        "x": 660,
+        "y": 480,
+        "wires": [
+            [
+                "9b9101bed14bd280"
+            ]
+        ]
+    },
+    {
+        "id": "9b9101bed14bd280",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 18",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "76118380f231d042",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current State - Wildcard",
+        "properties": [
+            "test10.*.currentState"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 700,
+        "y": 520,
+        "wires": [
+            [
+                "c641b1f9ed9e4164"
+            ]
+        ]
+    },
+    {
+        "id": "c641b1f9ed9e4164",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 19",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "42fe018c5dfaaea5",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current or Target State Value - Regex",
+        "properties": [
+            "test10\\.[^.]*Valve\\.(current|target)State\\.value$"
+        ],
+        "propertyTypes": [
+            "regex"
+        ],
+        "x": 750,
+        "y": 600,
+        "wires": [
+            [
+                "8f28d9d3266574d9"
+            ]
+        ]
+    },
+    {
+        "id": "8f28d9d3266574d9",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 20",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "f1b7b552f9a7597c",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 21",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "2b5fedb665aec84a",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "All Valve States - Wildcard",
+        "properties": [
+            "test10.*Valve.*State"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 710,
+        "y": 560,
+        "wires": [
+            [
+                "f1b7b552f9a7597c"
+            ]
+        ]
+    },
+    {
+        "id": "c45bfdb423ac7e56",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "JSONata",
+        "properties": [
+            "test10.**[type=\"Valve\"]"
+        ],
+        "propertyTypes": [
+            "jsonata"
+        ],
+        "x": 660,
+        "y": 640,
+        "wires": [
+            [
+                "1bf48d11237b0acf"
+            ]
+        ]
+    },
+    {
+        "id": "1bf48d11237b0acf",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 22",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "68d56cbd3e44e39a",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current State - Wildcard",
+        "properties": [
+            "test10.*.currentState"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 700,
+        "y": 680,
+        "wires": [
+            [
+                "2b6b3a7c9a163b86"
+            ]
+        ]
+    },
+    {
+        "id": "2b6b3a7c9a163b86",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 23",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "b67b50505916f287",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current or Target State Value - Regex",
+        "properties": [
+            "test10\\.[^.]*Valve\\.(current|target)State\\.value$"
+        ],
+        "propertyTypes": [
+            "regex"
+        ],
+        "x": 750,
+        "y": 760,
+        "wires": [
+            [
+                "d17866b9a30bf42b"
+            ]
+        ]
+    },
+    {
+        "id": "d17866b9a30bf42b",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 24",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "0c79c11a35261189",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 25",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "fcac255bd783a9b5",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "All Valve States - Wildcard",
+        "properties": [
+            "test10.*Valve.*State"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 710,
+        "y": 720,
+        "wires": [
+            [
+                "0c79c11a35261189"
+            ]
+        ]
+    },
+    {
+        "id": "52107bb35e91a577",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "JSONata",
+        "properties": [
+            "test10.**[type=\"Valve\"]"
+        ],
+        "propertyTypes": [
+            "jsonata"
+        ],
+        "x": 660,
+        "y": 800,
+        "wires": [
+            [
+                "392ffadcda5f8851"
+            ]
+        ]
+    },
+    {
+        "id": "392ffadcda5f8851",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 26",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "099472de5d4bbe70",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current State - Wildcard",
+        "properties": [
+            "test10.*.currentState"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 700,
+        "y": 840,
+        "wires": [
+            [
+                "b172a99caf2ef469"
+            ]
+        ]
+    },
+    {
+        "id": "b172a99caf2ef469",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 27",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "89ad48c07a4f5e15",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "Current or Target State Value - Regex",
+        "properties": [
+            "test10\\.[^.]*Valve\\.(current|target)State\\.value$"
+        ],
+        "propertyTypes": [
+            "regex"
+        ],
+        "x": 750,
+        "y": 920,
+        "wires": [
+            [
+                "76a2e44b453356d3"
+            ]
+        ]
+    },
+    {
+        "id": "76a2e44b453356d3",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 28",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "e5a42227470a6cb7",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 29",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "44234b6e57a54a1c",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "All Valve States - Wildcard",
+        "properties": [
+            "test10.*Valve.*State"
+        ],
+        "propertyTypes": [
+            "str"
+        ],
+        "x": 710,
+        "y": 880,
+        "wires": [
+            [
+                "e5a42227470a6cb7"
+            ]
+        ]
+    },
+    {
+        "id": "c5eaaeb01a509d68",
+        "type": "subscribe-context",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "JSONata",
+        "properties": [
+            "test10.**[type=\"Valve\"]"
+        ],
+        "propertyTypes": [
+            "jsonata"
+        ],
+        "x": 660,
+        "y": 960,
+        "wires": [
+            [
+                "b85a2db468b4a2fb"
+            ]
+        ]
+    },
+    {
+        "id": "b85a2db468b4a2fb",
+        "type": "debug",
+        "z": "d69a31fa5a9f0984",
+        "g": "d85390f5639b6c73",
+        "name": "debug 30",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 960,
+        "wires": []
+    }
+]
